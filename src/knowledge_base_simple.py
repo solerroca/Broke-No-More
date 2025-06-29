@@ -11,9 +11,12 @@ from src.utils import chunk_text, get_file_hash
 class SimpleKnowledgeBase:
     """Manages the knowledge base using simple text search and JSON storage."""
     
-    def __init__(self):
+    def __init__(self, file_path: str = None):
         """Initialize the knowledge base."""
-        self.data_file = os.path.join(settings.KNOWLEDGE_BASE_DIR, "knowledge_base.json")
+        if file_path:
+            self.data_file = file_path
+        else:
+            self.data_file = os.path.join(settings.KNOWLEDGE_BASE_DIR, "knowledge_base.json")
         self.documents = self._load_documents()
     
     def _load_documents(self) -> List[Dict[str, Any]]:
@@ -38,10 +41,16 @@ class SimpleKnowledgeBase:
             st.error(f"Error saving documents: {str(e)}")
             return False
     
-    def add_document(self, content: str, filename: str, file_type: str = "text") -> bool:
+    def add_document(self, title: str = None, content: str = None, metadata: Dict[str, Any] = None, filename: str = None, file_type: str = "text") -> bool:
         """Add a document to the knowledge base."""
         try:
-            if not content.strip():
+            # Handle both old and new parameter styles
+            if title and content:
+                filename = title
+            elif filename is None:
+                filename = title or "untitled"
+            
+            if not content or not content.strip():
                 st.warning("Document content is empty")
                 return False
             
@@ -58,12 +67,14 @@ class SimpleKnowledgeBase:
             
             # Add document with chunks
             document = {
+                'title': title or filename,
                 'filename': filename,
                 'file_type': file_type,
                 'doc_hash': doc_hash,
                 'content': content,
                 'chunks': chunks,
-                'total_chunks': len(chunks)
+                'total_chunks': len(chunks),
+                'metadata': metadata or {}
             }
             
             self.documents.append(document)
@@ -79,6 +90,10 @@ class SimpleKnowledgeBase:
         except Exception as e:
             st.error(f"Error adding document to knowledge base: {str(e)}")
             return False
+    
+    def search(self, query: str, top_k: int = None) -> List[Dict[str, Any]]:
+        """Search for relevant documents based on the query using simple text matching."""
+        return self.search_documents(query, top_k)
     
     def search_documents(self, query: str, top_k: int = None) -> List[Dict[str, Any]]:
         """Search for relevant documents based on the query using simple text matching."""
@@ -110,6 +125,7 @@ class SimpleKnowledgeBase:
                     if score > 0:
                         scored_chunks.append({
                             'content': chunk,
+                            'title': doc.get('title', doc['filename']),
                             'filename': doc['filename'],
                             'file_type': doc['file_type'],
                             'similarity': min(score / (len(query_words) + 3), 1.0),  # Normalize to 0-1
@@ -132,6 +148,10 @@ class SimpleKnowledgeBase:
             st.error(f"Error searching documents: {str(e)}")
             return []
     
+    def list_documents(self) -> List[Dict[str, Any]]:
+        """List all documents in the knowledge base."""
+        return self.get_all_documents()
+    
     def document_exists(self, doc_hash: str) -> bool:
         """Check if a document already exists in the knowledge base."""
         return any(doc['doc_hash'] == doc_hash for doc in self.documents)
@@ -140,10 +160,12 @@ class SimpleKnowledgeBase:
         """Get all documents in the knowledge base."""
         try:
             return [{
+                'title': doc.get('title', doc['filename']),
                 'filename': doc['filename'],
                 'file_type': doc['file_type'],
                 'doc_hash': doc['doc_hash'],
-                'total_chunks': doc.get('total_chunks', 1)
+                'total_chunks': doc.get('total_chunks', 1),
+                'metadata': doc.get('metadata', {})
             } for doc in self.documents]
         except Exception as e:
             st.error(f"Error retrieving documents: {str(e)}")
@@ -199,8 +221,7 @@ class SimpleKnowledgeBase:
             return False
 
 
-# Global knowledge base instance
 @st.cache_resource
 def get_simple_knowledge_base() -> SimpleKnowledgeBase:
-    """Get a cached simple knowledge base instance."""
+    """Get cached knowledge base instance."""
     return SimpleKnowledgeBase() 

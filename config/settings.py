@@ -12,7 +12,7 @@ class Settings:
     
     # API Configuration
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-pro")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
     
     # App Configuration
@@ -22,6 +22,7 @@ class Settings:
     
     # Knowledge Base Configuration
     KNOWLEDGE_BASE_DIR: str = "data/knowledge_base"
+    KNOWLEDGE_BASE_PATH: str = os.path.join(KNOWLEDGE_BASE_DIR, "knowledge_base.json")
     CHROMA_DB_DIR: str = "data/chroma_db"
     SUPPORTED_FILE_TYPES: list = [".txt", ".pdf", ".docx"]
     MAX_FILE_SIZE_MB: int = 10
@@ -52,4 +53,8 @@ class Settings:
         }
 
 # Global settings instance
-settings = Settings() 
+settings = Settings()
+
+def get_settings() -> Settings:
+    """Get the application settings instance."""
+    return settings 
