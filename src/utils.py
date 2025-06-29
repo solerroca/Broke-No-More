@@ -5,6 +5,7 @@ import hashlib
 import streamlit as st
 from typing import List, Optional
 from io import BytesIO
+from pathlib import Path
 import pypdf
 from docx import Document
 
@@ -54,6 +55,45 @@ def extract_text_from_file(uploaded_file) -> Optional[str]:
             
     except Exception as e:
         st.error(f"Error extracting text from {uploaded_file.name}: {str(e)}")
+        return None
+
+
+def process_document(file_path: str) -> Optional[str]:
+    """Extract text content from a file on the filesystem."""
+    try:
+        file_path = Path(file_path)
+        
+        if not file_path.exists():
+            print(f"File not found: {file_path}")
+            return None
+        
+        file_extension = file_path.suffix.lower()
+        
+        if file_extension == '.txt':
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        
+        elif file_extension == '.pdf':
+            with open(file_path, 'rb') as f:
+                pdf_reader = pypdf.PdfReader(f)
+                text = ""
+                for page in pdf_reader.pages:
+                    text += page.extract_text() + "\n"
+                return text
+        
+        elif file_extension == '.docx':
+            doc = Document(file_path)
+            text = ""
+            for paragraph in doc.paragraphs:
+                text += paragraph.text + "\n"
+            return text
+        
+        else:
+            print(f"Unsupported file type: {file_extension}")
+            return None
+            
+    except Exception as e:
+        print(f"Error processing document {file_path}: {str(e)}")
         return None
 
 
