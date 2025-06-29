@@ -1,286 +1,382 @@
-"""Personal Finance Assistant - Simplified Streamlit Application"""
+"""Personal Finance Assistant - No Upload Version"""
 
 import streamlit as st
+import pandas as pd
+from datetime import datetime
 import os
+from pathlib import Path
 from typing import Optional
-from config.settings import settings
-from src.knowledge_base_simple import get_simple_knowledge_base
-from src.gemini_client import get_gemini_client
-from src.utils import (
-    create_directories, 
-    extract_text_from_file, 
-    validate_finance_question,
-    format_response,
-    get_file_size_mb
+
+from src.gemini_client import GeminiClient
+from src.knowledge_base_simple import SimpleKnowledgeBase
+from src.utils import validate_finance_question, process_document
+from config.settings import get_settings
+
+# Page configuration
+st.set_page_config(
+    page_title="💰 Personal Finance Q&A Assistant",
+    page_icon="💰",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
+# Custom CSS for better styling
+st.markdown("""
+<style>
+    .main-header {
+        text-align: center;
+        padding: 1rem 0;
+        background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    .info-box {
+        background-color: #f0f9ff;
+        border-left: 4px solid #3b82f6;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+    }
+    
+    .warning-box {
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+    }
+    
+    .success-box {
+        background-color: #f0fdf4;
+        border-left: 4px solid #10b981;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+    }
+    
+    .stButton > button {
+        width: 100%;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 5px;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+    
+    .stButton > button:hover {
+        background-color: #1d4ed8;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 def initialize_app():
-    """Initialize the Streamlit app configuration."""
-    st.set_page_config(
-        page_title=settings.PAGE_TITLE,
-        page_icon=settings.PAGE_ICON,
-        layout=settings.LAYOUT,
-        initial_sidebar_state="expanded"
-    )
-    
-    # Create necessary directories
-    create_directories()
-    
-    # Initialize session state
-    if 'messages' not in st.session_state:
-        st.session_state.messages = []
-    if 'knowledge_base_initialized' not in st.session_state:
-        st.session_state.knowledge_base_initialized = False
-
-
-def check_api_setup() -> bool:
-    """Check if the API is properly configured."""
-    if not settings.validate_api_key():
-        st.error("🚨 **Gemini API Key Required**")
-        st.markdown("""
-        Please set up your Gemini API key:
+    """Initialize the application with settings and clients."""
+    try:
+        settings = get_settings()
         
-        **For local development:**
-        1. Copy `.env.example` to `.env`
-        2. Add your Gemini API key to the `.env` file
-        
-        **For Streamlit Cloud:**
-        1. Go to your app settings
-        2. Add `GEMINI_API_KEY` in the Secrets section
-        
-        **Get your API key:** [Google AI Studio](https://makersuite.google.com/app/apikey)
-        """)
-        return False
-    return True
-
-
-def display_header():
-    """Display the app header and description."""
-    st.title("💰 Personal Finance Assistant")
-    st.markdown("""
-    Ask questions about personal finance and get answers based on your custom knowledge base.
-    Upload financial documents or add text directly to build your personalized financial advisor.
-    
-    *This is a simplified version using basic text search. For full vector search capabilities, install the complete requirements.*
-    """)
-
-
-def display_sidebar():
-    """Display the sidebar with knowledge base management."""
-    with st.sidebar:
-        st.header("📚 Knowledge Base")
+        # Initialize Gemini client
+        if 'gemini_client' not in st.session_state:
+            st.session_state.gemini_client = GeminiClient(settings.GEMINI_API_KEY)
         
         # Initialize knowledge base
-        kb = get_simple_knowledge_base()
-        
-        # Display stats
-        stats = kb.get_stats()
-        st.metric("Documents", stats['total_documents'])
-        st.metric("Text Chunks", stats['total_chunks'])
-        
-        # File upload section
-        st.subheader("📁 Upload Documents")
-        uploaded_files = st.file_uploader(
-            "Upload financial documents",
-            **settings.get_file_upload_config()
-        )
-        
-        if uploaded_files:
-            for uploaded_file in uploaded_files:
-                if st.button(f"Add {uploaded_file.name}", key=f"add_{uploaded_file.name}"):
-                    # Check file size
-                    file_content = uploaded_file.read()
-                    file_size_mb = get_file_size_mb(file_content)
-                    
-                    if file_size_mb > settings.MAX_FILE_SIZE_MB:
-                        st.error(f"File too large: {file_size_mb:.1f}MB (max: {settings.MAX_FILE_SIZE_MB}MB)")
-                        continue
-                    
-                    # Reset file pointer
-                    uploaded_file.seek(0)
-                    
-                    # Extract text
-                    text_content = extract_text_from_file(uploaded_file)
-                    if text_content:
-                        # Add to knowledge base
-                        file_type = os.path.splitext(uploaded_file.name)[1][1:]  # Remove dot
-                        kb.add_document(text_content, uploaded_file.name, file_type)
-                        st.rerun()
-        
-        # Text input section
-        st.subheader("✍️ Add Text Directly")
-        with st.form("add_text_form"):
-            text_title = st.text_input("Title/Description")
-            text_content = st.text_area("Financial Information", height=150)
+        if 'knowledge_base' not in st.session_state:
+            st.session_state.knowledge_base = SimpleKnowledgeBase(settings.KNOWLEDGE_BASE_PATH)
             
-            if st.form_submit_button("Add Text"):
-                if text_content.strip() and text_title.strip():
-                    kb.add_document(text_content, text_title, "text")
-                    st.rerun()
-                else:
-                    st.error("Please provide both title and content")
-        
-        # Knowledge base management
-        st.subheader("🗂️ Manage Documents")
-        
-        all_docs = kb.get_all_documents()
-        if all_docs:
-            for doc in all_docs:
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.text(f"📄 {doc['filename']}")
-                    st.caption(f"Type: {doc['file_type']} | Chunks: {doc.get('total_chunks', 1)}")
-                with col2:
-                    if st.button("🗑️", key=f"delete_{doc['doc_hash']}", help="Delete document"):
-                        kb.delete_document(doc['doc_hash'])
-                        st.rerun()
+        # Auto-load documents from the documents folder
+        if 'documents_loaded' not in st.session_state:
+            load_predefined_documents()
+            st.session_state.documents_loaded = True
             
-            # Clear all button
-            st.divider()
-            if st.button("🗑️ Clear All Documents", type="secondary"):
-                if st.session_state.get('confirm_clear', False):
-                    kb.clear_all()
-                    st.session_state.confirm_clear = False
-                    st.rerun()
-                else:
-                    st.session_state.confirm_clear = True
-                    st.warning("Click again to confirm clearing all documents")
-        else:
-            st.info("No documents in knowledge base. Upload some documents to get started!")
+        return True
+        
+    except Exception as e:
+        st.error(f"❌ **Error initializing application:** {str(e)}")
+        st.markdown("""
+        <div class="warning-box">
+            <strong>Troubleshooting:</strong>
+            <ul>
+                <li>Make sure your .env file contains a valid GEMINI_API_KEY</li>
+                <li>Check that all required files are present</li>
+                <li>Restart the application if issues persist</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        return False
 
-
-def display_chat_interface():
-    """Display the main chat interface."""
-    # Initialize clients
-    kb = get_simple_knowledge_base()
-    gemini_client = get_gemini_client()
+def load_predefined_documents():
+    """Load documents from the predefined documents folder."""
+    documents_folder = Path("data/documents")
     
-    if gemini_client is None:
-        st.error("Failed to initialize Gemini client. Please check your API key.")
+    if not documents_folder.exists():
+        st.info("📁 Documents folder not found. Creating it now...")
+        documents_folder.mkdir(parents=True, exist_ok=True)
         return
     
-    # Display chat messages
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-            
-            # Show sources for assistant messages
-            if message["role"] == "assistant" and "sources" in message:
-                with st.expander("📖 Sources Used"):
-                    for i, source in enumerate(message["sources"], 1):
-                        st.write(f"**{i}. {source['filename']}** (relevance: {source['similarity']:.2f})")
-                        st.write(f"_{source['content'][:200]}..._")
+    # Get all supported document files
+    supported_extensions = ['.txt', '.pdf', '.docx']
+    document_files = []
     
-    # Chat input
-    if prompt := st.chat_input("Ask a question about personal finance..."):
-        # Validate question
-        if not validate_finance_question(prompt):
-            st.warning("⚠️ This appears to be a non-finance question. This assistant is designed to help with personal finance topics.")
+    for ext in supported_extensions:
+        document_files.extend(list(documents_folder.glob(f"*{ext}")))
+    
+    if not document_files:
+        st.info("📄 No documents found in documents folder. Add documents to `data/documents/` folder and restart the app.")
+        return
+    
+    # Load documents into knowledge base
+    loaded_count = 0
+    for doc_path in document_files:
+        try:
+            # Check if document is already in knowledge base
+            existing_docs = st.session_state.knowledge_base.list_documents()
+            doc_titles = [doc.get('title', doc.get('filename', '')) for doc in existing_docs]
+            
+            if doc_path.name not in doc_titles:
+                # Read and process the document
+                content = process_document(str(doc_path))
+                
+                if content:
+                    st.session_state.knowledge_base.add_document(
+                        title=doc_path.name,
+                        content=content,
+                        metadata={
+                            'file_type': doc_path.suffix.lower(),
+                            'file_size': doc_path.stat().st_size,
+                            'added_date': datetime.now().isoformat(),
+                            'source': 'predefined'
+                        }
+                    )
+                    loaded_count += 1
+                    
+        except Exception as e:
+            st.warning(f"⚠️ Could not load {doc_path.name}: {str(e)}")
+    
+    if loaded_count > 0:
+        st.success(f"✅ Loaded {loaded_count} new documents into the knowledge base!")
+
+def display_knowledge_base_status():
+    """Display current knowledge base status."""
+    st.markdown("### 📚 Knowledge Base Status")
+    
+    try:
+        documents = st.session_state.knowledge_base.list_documents()
+        
+        if not documents:
+            st.markdown("""
+            <div class="info-box">
+                <strong>📄 No documents loaded</strong><br>
+                Add documents to the <code>data/documents/</code> folder and restart the app to populate the knowledge base.
+            </div>
+            """, unsafe_allow_html=True)
             return
         
-        # Add user message to chat
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        # Display documents in a nice format
+        st.markdown(f"**📊 Total Documents:** {len(documents)}")
         
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        # Create a DataFrame for better display
+        doc_data = []
+        for doc in documents:
+            title = doc.get('title', doc.get('filename', 'Unknown'))
+            metadata = doc.get('metadata', {})
+            
+            doc_data.append({
+                'Document': title,
+                'Type': metadata.get('file_type', 'Unknown').upper().replace('.', ''),
+                'Size': f"{metadata.get('file_size', 0) / 1024:.1f} KB" if metadata.get('file_size') else 'Unknown',
+                'Added': metadata.get('added_date', 'Unknown')[:10] if metadata.get('added_date') else 'Unknown'
+            })
         
-        # Generate response
-        with st.chat_message("assistant"):
-            with st.spinner("Searching knowledge base and generating response..."):
-                # Search for relevant documents
-                relevant_docs = kb.search_documents(prompt)
-                
-                if not relevant_docs:
-                    response = "I couldn't find relevant information in your knowledge base to answer this question. Please add more financial documents or information to help me provide better answers."
-                    sources = []
-                else:
-                    # Extract document content for context
-                    context_docs = [doc['content'] for doc in relevant_docs]
-                    
-                    # Generate response using Gemini
-                    response = gemini_client.generate_response(prompt, context_docs)
-                    sources = relevant_docs
-                    
-                    if not response:
-                        response = "I'm sorry, I encountered an error while generating a response. Please try again."
-                        sources = []
-                
-                # Format and display response
-                formatted_response = format_response(response)
-                st.markdown(formatted_response)
-                
-                # Show sources
-                if sources:
-                    with st.expander("📖 Sources Used"):
-                        for i, source in enumerate(sources, 1):
-                            st.write(f"**{i}. {source['filename']}** (relevance: {source['similarity']:.2f})")
-                            st.write(f"_{source['content'][:200]}..._")
+        if doc_data:
+            df = pd.DataFrame(doc_data)
+            st.dataframe(df, use_container_width=True, hide_index=True)
         
-        # Add assistant response to chat
-        assistant_message = {
-            "role": "assistant", 
-            "content": formatted_response
-        }
-        if sources:
-            assistant_message["sources"] = sources
+        # Add instructions for managing documents
+        with st.expander("📝 How to Update Documents"):
+            st.markdown("""
+            **To add or update documents:**
+            
+            1. **Add documents** to the `data/documents/` folder in your project
+            2. **Supported formats:** TXT, PDF, DOCX
+            3. **Restart the app** to load new documents
+            4. **Remove documents** by deleting them from the folder and restarting
+            
+            **Document Management Tips:**
+            - Use descriptive filenames for easy identification
+            - Keep documents focused on financial topics for best results
+            - Organize by categories (e.g., `budgeting-guide.pdf`, `investment-basics.txt`)
+            
+            **Current Document Folder:** `data/documents/`
+            """)
         
-        st.session_state.messages.append(assistant_message)
-
-
-def display_help_section():
-    """Display help and example questions."""
-    with st.expander("❓ Help & Example Questions"):
-        st.markdown("""
-        ### How to Use This App:
-        1. **Add Documents**: Upload PDF, DOCX, or TXT files with financial information
-        2. **Add Text**: Directly input financial advice or information
-        3. **Ask Questions**: Type your personal finance questions in the chat
-        
-        ### Example Questions:
-        - "How much should I save for an emergency fund?"
-        - "What's the difference between a Roth IRA and traditional IRA?"
-        - "How should I prioritize paying off debt?"
-        - "What percentage of income should go to retirement savings?"
-        - "What types of insurance do I need?"
-        
-        ### Tips:
-        - Be specific in your questions for better answers
-        - Add comprehensive financial documents for more detailed responses
-        - The AI will only use information from your knowledge base
-        - This version uses basic text search - for advanced vector search, install the full requirements
-        """)
-
+    except Exception as e:
+        st.error(f"❌ Error displaying knowledge base status: {str(e)}")
 
 def main():
     """Main application function."""
-    # Initialize app
-    initialize_app()
     
-    # Check API setup
-    if not check_api_setup():
-        return
-    
-    # Display header
-    display_header()
-    
-    # Display sidebar
-    display_sidebar()
-    
-    # Display help section
-    display_help_section()
-    
-    # Display main chat interface
-    display_chat_interface()
-    
-    # Footer
-    st.divider()
+    # Header
     st.markdown("""
-    <div style='text-align: center; color: gray;'>
-        Personal Finance Assistant | Built with Streamlit & Gemini AI | Simplified Version
+    <div class="main-header">
+        <h1>💰 Personal Finance Q&A Assistant</h1>
+        <p>Get expert financial advice powered by AI and curated knowledge</p>
     </div>
     """, unsafe_allow_html=True)
-
+    
+    # Initialize application
+    if not initialize_app():
+        st.stop()
+    
+    # Sidebar with knowledge base status
+    with st.sidebar:
+        st.markdown("## 🎛️ Knowledge Base")
+        display_knowledge_base_status()
+        
+        st.markdown("---")
+        st.markdown("### ℹ️ About")
+        st.markdown("""
+        This app provides personalized financial advice based on curated financial documents and AI analysis.
+        
+        **Features:**
+        - 🤖 AI-powered responses using Google Gemini
+        - 📚 Curated financial knowledge base
+        - 💡 Source citations for transparency
+        - 📱 Mobile-friendly interface
+        
+        **Note:** Documents are managed by the app administrator. 
+        Users cannot upload files directly.
+        """)
+    
+    # Main content area
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("## 💬 Ask Your Finance Question")
+        
+        # Question input
+        user_question = st.text_area(
+            "What would you like to know about personal finance?",
+            placeholder="e.g., How should I start investing as a beginner? What's the best way to create a budget?",
+            height=100,
+            help="Ask specific questions about budgeting, investing, saving, debt management, or other financial topics."
+        )
+        
+        # Submit button
+        if st.button("🔍 Get Answer", type="primary"):
+            if not user_question.strip():
+                st.warning("📝 Please enter a question first.")
+            else:
+                # Validate if it's a finance-related question
+                if not validate_finance_question(user_question):
+                    st.markdown("""
+                    <div class="warning-box">
+                        <strong>⚠️ Not a finance question</strong><br>
+                        This app is designed for personal finance questions. Please ask about topics like:
+                        budgeting, saving, investing, debt management, retirement planning, insurance, or taxes.
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    # Process the question
+                    with st.spinner("🤔 Thinking and searching knowledge base..."):
+                        try:
+                            # Search knowledge base
+                            relevant_docs = st.session_state.knowledge_base.search(user_question, top_k=3)
+                            
+                            # Generate response using Gemini
+                            response = st.session_state.gemini_client.generate_response(
+                                question=user_question,
+                                context_documents=relevant_docs
+                            )
+                            
+                            # Display response
+                            st.markdown("### 💡 Answer")
+                            st.markdown(response['answer'])
+                            
+                            # Display confidence and sources
+                            if response.get('confidence'):
+                                confidence_color = "🟢" if response['confidence'] > 0.7 else "🟡" if response['confidence'] > 0.4 else "🔴"
+                                st.markdown(f"**Confidence:** {confidence_color} {response['confidence']:.1%}")
+                            
+                            if response.get('sources'):
+                                st.markdown("### 📚 Sources")
+                                for i, source in enumerate(response['sources'], 1):
+                                    title = source.get('title', source.get('filename', f'Document {i}'))
+                                    with st.expander(f"📄 Source {i}: {title}"):
+                                        st.markdown(f"**Relevance Score:** {source.get('score', 0):.3f}")
+                                        st.markdown("**Content:**")
+                                        content = source.get('content', 'No content available')
+                                        display_content = content[:500] + "..." if len(content) > 500 else content
+                                        st.markdown(display_content)
+                            
+                        except Exception as e:
+                            st.error(f"❌ **Error generating response:** {str(e)}")
+                            st.markdown("""
+                            <div class="warning-box">
+                                <strong>Troubleshooting:</strong>
+                                <ul>
+                                    <li>Check your internet connection</li>
+                                    <li>Verify your Gemini API key is valid</li>
+                                    <li>Try rephrasing your question</li>
+                                </ul>
+                            </div>
+                            """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("## 📋 Quick Tips")
+        st.markdown("""
+        **💡 How to get better answers:**
+        
+        ✅ **Be specific**  
+        "How much should I save for retirement at age 30?" vs "Tell me about retirement"
+        
+        ✅ **Include context**  
+        "I'm 25, make $50k, want to start investing - where do I begin?"
+        
+        ✅ **Ask follow-ups**  
+        Build on previous answers for deeper insights
+        
+        **📚 Topics I can help with:**
+        - 💰 Budgeting & saving strategies
+        - 📈 Investment basics & strategies  
+        - 💳 Debt management & payoff plans
+        - 🏠 Home buying & mortgages
+        - 🛡️ Insurance & protection planning
+        - 📊 Tax planning & optimization
+        - 💼 Retirement planning
+        """)
+        
+        # Sample questions
+        st.markdown("### 🎯 Example Questions")
+        sample_questions = [
+            "What's the 50/30/20 budgeting rule?",
+            "How do I start an emergency fund?",
+            "What's the difference between 401k and IRA?",
+            "Should I pay off debt or invest first?",
+            "How much house can I afford?",
+        ]
+        
+        for question in sample_questions:
+            if st.button(f"💭 {question}", key=f"sample_{hash(question)}"):
+                # Set the question in session state to be picked up
+                st.session_state.sample_question = question
+                st.rerun()
+        
+        # Handle sample question selection
+        if hasattr(st.session_state, 'sample_question'):
+            st.text_area(
+                "Selected question:",
+                value=st.session_state.sample_question,
+                key="sample_display",
+                disabled=True
+            )
+            if st.button("🔍 Use This Question"):
+                # Process the sample question
+                user_question = st.session_state.sample_question
+                delattr(st.session_state, 'sample_question')
+                # Trigger processing logic here similar to the main question input
 
 if __name__ == "__main__":
     main() 
