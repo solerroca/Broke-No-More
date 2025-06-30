@@ -1,7 +1,9 @@
 # Environment variables
 .env
+.env.*
+*.env
 
-# Python
+# Python Virtual Environments
 __pycache__/
 *.py[cod]
 *$py.class
@@ -10,7 +12,14 @@ __pycache__/
 env/
 venv/
 ENV/
+finance_assistant_env/
 *.egg-info/
+
+# API Keys and Secrets
+*.key
+*.pem
+secrets.txt
+config/secrets/
 
 # Data directories
 data/chroma_db/
