@@ -184,9 +184,14 @@ def main():
     # Main content area - full width
     st.markdown("## 💬 Ask Your Finance Question")
     
+    # Initialize selected question in session state
+    if 'selected_question' not in st.session_state:
+        st.session_state.selected_question = ""
+    
     # Question input
     user_question = st.text_area(
         "What would you like to know about personal finance?",
+        value=st.session_state.selected_question,
         placeholder="e.g., How should I start investing as a beginner? What's the best way to create a budget?",
         height=120,
         help="Ask specific questions about budgeting, investing, saving, debt management, or other financial topics."
@@ -197,6 +202,9 @@ def main():
         if not user_question.strip():
             st.warning("📝 Please enter a question first.")
         else:
+            # Clear the selected question from session state
+            st.session_state.selected_question = ""
+            
             # Validate if it's a finance-related question
             if not validate_finance_question(user_question):
                 st.markdown("""
@@ -283,16 +291,8 @@ def main():
     for i, question in enumerate(sample_questions):
         with cols[i]:
             if st.button(f"💭 {question}", key=f"sample_{i}"):
-                st.session_state.sample_question = question
+                st.session_state.selected_question = question
                 st.rerun()
-    
-    # Handle sample question selection
-    if hasattr(st.session_state, 'sample_question'):
-        st.info(f"💡 Try asking: {st.session_state.sample_question}")
-        if st.button("🔍 Use This Question"):
-            # Clear the sample question and trigger processing
-            delattr(st.session_state, 'sample_question')
-            st.rerun()
 
 if __name__ == "__main__":
     main() 
