@@ -8,8 +8,8 @@ import os
 def main():
     """Run the Streamlit app."""
     # Check if we're in the right directory
-    if not os.path.exists('app_simple.py'):
-        print("Error: app_simple.py not found. Please run this script from the project directory.")
+    if not os.path.exists('app.py'):
+        print("Error: app.py not found. Please run this script from the project directory.")
         sys.exit(1)
     
     # Check if .env file exists
@@ -24,7 +24,7 @@ def main():
         print("Press Ctrl+C to stop the app")
         
         subprocess.run([
-            sys.executable, '-m', 'streamlit', 'run', 'app_simple.py',
+            sys.executable, '-m', 'streamlit', 'run', 'app.py',
             '--server.headless', 'true',
             '--server.port', '8501'
         ])
@@ -32,7 +32,7 @@ def main():
         print("\nApp stopped.")
     except Exception as e:
         print(f"Error running app: {e}")
-        print("Try running manually: python3 -m streamlit run app_simple.py")
+        print("Try running manually: python3 -m streamlit run app.py")
 
 if __name__ == "__main__":
     main() 
