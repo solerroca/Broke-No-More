@@ -293,6 +293,20 @@ def main():
             if st.button(f"💭 {question}", key=f"sample_{i}"):
                 st.session_state.selected_question = question
                 st.rerun()
+    
+    # Disclaimer section - discrete and secondary
+    st.markdown("---")
+    
+    with st.expander("⚠️ Important Disclaimer", expanded=False):
+        st.markdown("""
+        <div style="font-size: 0.85em; color: #6b7280; line-height: 1.4;">
+        The information provided by this Personal Finance Q&A Assistant is for educational and informational purposes only and should not be considered as personalized financial, investment, tax, or legal advice. This AI-powered tool provides general guidance based on common financial principles and may not be suitable for your specific financial situation.
+        <br><br>
+        Always consult with qualified financial advisors, tax professionals, or other licensed experts before making important financial decisions. Past performance does not guarantee future results. All investments carry risk, including potential loss of principal.
+        <br><br>
+        By using this service, you acknowledge that you are solely responsible for your financial decisions and that neither the app nor its creators are liable for any financial losses or damages resulting from your use of this information.
+        </div>
+        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main() 
