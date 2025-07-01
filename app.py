@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from typing import Optional
 import base64
+import random
+import re
 
 from src.gemini_client import GeminiClient
 from src.knowledge_base_simple import SimpleKnowledgeBase
@@ -167,6 +169,141 @@ def load_predefined_documents():
             # Silent loading - don't show warnings
             pass
 
+def clean_response_text(text):
+    """Clean response text to create highly readable, conversational paragraphs with proper structure."""
+    
+    # Remove document references and source mentions first
+    patterns_to_remove = [
+        r'according to[^.]*\.pdf[^.]*\.',
+        r'as mentioned in[^.]*\.pdf[^.]*\.',
+        r'source:[^.]*\.pdf[^.]*\.',
+        r'from[^.]*\.pdf[^.]*\.',
+        r'referenced in[^.]*\.pdf[^.]*\.',
+        r'\([^)]*\.pdf[^)]*\)',
+        r'as stated in the document[^.]*\.',
+        r'according to the source material[^.]*\.',
+        r'as outlined in[^.]*document[^.]*\.',
+        r'per the financial guide[^.]*\.',
+    ]
+    
+    for pattern in patterns_to_remove:
+        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+    
+    # Fix problematic formatting
+    text = re.sub(r'(\w)\*(\w)', r'\1 \2', text)  
+    text = re.sub(r'(\w)_(\w)', r'\1 \2', text)   
+    text = re.sub(r'\.(\w)', r'. \1', text)
+    text = re.sub(r':(\w)', r': \1', text)
+    text = re.sub(r',(\w)', r', \1', text)
+    
+    # First, identify and properly format numbered points
+    # Look for patterns like "1. Title:" followed by explanation
+    text = re.sub(r'(\d+\.\s+)([^:]+:)\s*([^.]+\.)', r'\n\n**\1\2**\n\n\3\n', text)
+    
+    # Break after sentences before new numbered points
+    text = re.sub(r'(\.\s+)(\d+\.\s+[A-Z])', r'\1\n\n\2', text)
+    
+    # Add conversational transitions before numbered lists
+    text = re.sub(r'(\.)\s+(\d+\.\s+[A-Z][^:]*:)', r'\1\n\nHere are the key areas to focus on:\n\n\2', text)
+    
+    # Break up long paragraphs by splitting at natural points
+    # Split long sentences at conjunctions
+    sentences = text.split('. ')
+    processed_sentences = []
+    
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if len(sentence) > 200:  # Very long sentences
+            # Split at natural break points
+            if '. Additionally, ' in sentence:
+                parts = sentence.split('. Additionally, ')
+                processed_sentences.append(parts[0] + '.')
+                processed_sentences.append('Additionally, ' + parts[1])
+            elif '. However, ' in sentence:
+                parts = sentence.split('. However, ')
+                processed_sentences.append(parts[0] + '.')
+                processed_sentences.append('However, ' + parts[1])
+            elif '. Consider ' in sentence:
+                parts = sentence.split('. Consider ')
+                processed_sentences.append(parts[0] + '.')
+                processed_sentences.append('Consider ' + parts[1])
+            elif '. Remember, ' in sentence:
+                parts = sentence.split('. Remember, ')
+                processed_sentences.append(parts[0] + '.')
+                processed_sentences.append('Remember, ' + parts[1])
+            else:
+                processed_sentences.append(sentence)
+        else:
+            processed_sentences.append(sentence)
+    
+    text = '. '.join(processed_sentences)
+    
+    # Add paragraph breaks for readability
+    text = re.sub(r'(\.\s+)([A-Z][^.]{30,})', r'\1\n\n\2', text)
+    
+    # Ensure proper spacing around numbered points
+    text = re.sub(r'(\d+\.\s+[^:]+:)\s*', r'\n\n**\1**\n\n', text)
+    
+    # Add explanatory paragraphs between numbered sections
+    text = re.sub(r'(\*\*\d+\.\s+[^*]+\*\*\n\n[^*]+)(\n\n\*\*\d+\.)', 
+                  r'\1\n\nMoving to the next important step:\2', text)
+    
+    # Clean up bullet points to be more readable
+    text = re.sub(r'([•·-]\s+)', r'\n\n• ', text)
+    
+    # Add contextual transitions
+    transitions = [
+        (r'(\*\*1\.[^*]+\*\*)', r'Let\'s start with the foundation:\n\n\1'),
+        (r'(\*\*2\.[^*]+\*\*)', r'Next, we need to address:\n\n\1'),
+        (r'(\*\*3\.[^*]+\*\*)', r'The third crucial step involves:\n\n\1'),
+        (r'(\*\*4\.[^*]+\*\*)', r'Another essential component is:\n\n\1'),
+        (r'(\*\*5\.[^*]+\*\*)', r'Don\'t overlook this important area:\n\n\1'),
+    ]
+    
+    for pattern, replacement in transitions:
+        text = re.sub(pattern, replacement, text)
+    
+    # Clean up excessive line breaks and formatting
+    text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)  # Max double line breaks
+    text = re.sub(r'[ \t]+', ' ', text)  # Single spaces
+    text = re.sub(r'\n\s+', '\n', text)  # No leading spaces on lines
+    
+    # Fix formatting issues
+    text = re.sub(r'\.\.+', '.', text)
+    text = re.sub(r'\*\*\s*\*\*', '', text)  # Remove empty bold tags
+    
+    # Add a concluding thought for long advice
+    if len(text) > 800 and not text.endswith(('journey.', 'future.', 'success.', 'together.')):
+        text += '\n\nRemember, financial success is a journey that requires patience, communication, and consistent effort. Take it one step at a time, and don\'t hesitate to seek professional guidance when needed.'
+    
+    return text.strip()
+
+def add_book_reference_occasionally(text):
+    """Add reference to 'Broke No More' by Sasha Albright every 4-5 answers."""
+    # Initialize answer counter if not exists
+    if 'answer_count' not in st.session_state:
+        st.session_state.answer_count = 0
+    
+    # Increment counter
+    st.session_state.answer_count += 1
+    
+    # Add book reference every 4-5 answers (randomly between 4 and 5)
+    reference_frequency = random.randint(4, 5)
+    
+    if st.session_state.answer_count % reference_frequency == 0:
+        book_references = [
+            "\n\n*This advice aligns with principles from 'Broke No More' by Sasha Albright.*",
+            "\n\n*For more detailed strategies, consider reading 'Broke No More' by Sasha Albright.*",
+            "\n\n*These concepts are further explored in 'Broke No More' by Sasha Albright.*",
+            "\n\n*This approach is consistent with the financial wisdom found in 'Broke No More' by Sasha Albright.*"
+        ]
+        
+        # Randomly select one reference style
+        selected_reference = random.choice(book_references)
+        text += selected_reference
+    
+    return text
+
 def load_book_image():
     """Load and encode the promotional book image."""
     try:
@@ -201,17 +338,21 @@ def main():
     book_image_data = load_book_image()
     
     if book_image_data:
-        # Show promotional section with actual book image
+        # Show promotional section with professional styling - entire section is clickable
         st.markdown(f"""
-        <div style="text-align: center; margin: 30px 0; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; display: inline-block;">
-                <h3 style="color: white; margin-bottom: 3px; font-size: 1.1em;">📚 App Powered by the Book</h3>
-                <h2 style="color: #fff; margin: 0; font-weight: 700; font-size: 1.8em;">'Broke No More'</h2>
+        <div style="text-align: center; margin: 30px 0;">
+            <div style="margin-bottom: 10px;">
+                <p style="color: #2c3e50; font-size: 1.1em; font-weight: 700; margin: 0;">App powered by</p>
             </div>
-            <a href="https://www.amazon.com/Broke-More-Easy-Follow-Strategies/dp/196628800X/ref=sr_1_2?crid=1I2229DFKOWE2&dib=eyJ2IjoiMSJ9.Y3EC7BYPotcNcCpQkFuWgyTURtZXDgSMa7v87YOnt6xEb5zqzgwRhigftpmGRMm4li93dXytUd--woy-3Rgy2IyLVY6WKfoqkPhv2wCyF6Hfw0BtnlDDAko1UEaUoucVe6Xkm91djx57Bhqy8Dzs2eNZKDL91bhxdBCwFUA-rQUqzyTIp7oB0OG_dWcP4nj1xEcm0eVBjM4sSSdmHdwiq2BQAFp1p9_rLQWo2z-n0_M.ogRhG6GClaDbNPhSUSXTVFswk4_0KRCJLAb9iR8n0S4&dib_tag=se&keywords=broke+no+more&qid=1751304047&sprefix=broke+no+more%2Caps%2C171&sr=8-2" target="_blank" style="text-decoration: none;">
-                <img src="data:image/png;base64,{book_image_data}" alt="Broke No More - The Gen Z Guide to Money Mastery" style="max-width: 300px; height: auto; border-radius: 8px; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <a href="https://www.amazon.com/Broke-More-Easy-Follow-Strategies/dp/196628800X/ref=sr_1_2?crid=1I2229DFKOWE2&dib=eyJ2IjoiMSJ9.Y3EC7BYPotcNcCpQkFuWgyTURtZXDgSMa7v87YOnt6xEb5zqzgwRhigftpmGRMm4li93dXytUd--woy-3Rgy2IyLVY6WKfoqkPhv2wCyF6Hfw0BtnlDDAko1UEaUoucVe6Xkm91djx57Bhqy8Dzs2eNZKDL91bhxdBCwFUA-rQUqzyTIp7oB0OG_dWcP4nj1xEcm0eVBjM4sSSdmHdwiq2BQAFp1p9_rLQWo2z-n0_M.ogRhG6GClaDbNPhSUSXTVFswk4_0KRCJLAb9iR8n0S4&dib_tag=se&keywords=broke+no+more&qid=1751304047&sprefix=broke+no+more%2Caps%2C171&sr=8-2" target="_blank" style="text-decoration: none; display: block;">
+                <div style="display: inline-block; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 25px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 15px rgba(0,0,0,0.08)'">
+                    <img src="data:image/png;base64,{book_image_data}" alt="Broke No More - The Gen Z Guide to Money Mastery" style="max-width: 280px; height: auto; border-radius: 8px;">
+                    <div style="margin-top: 12px;">
+                        <h3 style="color: #2c3e50; margin: 0; font-size: 1.2em; font-weight: 600;">'Broke No More'</h3>
+                        <p style="color: #7f8c8d; margin: 4px 0 0 0; font-size: 0.9em;">📚 Link to the book</p>
+                    </div>
+                </div>
             </a>
-            <p style="margin-top: 15px; color: #555; font-size: 0.9em;">📚 Link to the book</p>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -249,8 +390,39 @@ def main():
         help="Ask specific questions about budgeting, investing, saving, debt management, or other financial topics."
     )
     
-    # Submit button
-    if st.button("🔍 Get Expert Answer", type="primary"):
+    # Submit button - fixed size and centered
+    st.markdown("""
+    <style>
+        .stButton > button[kind="primary"] {
+            width: 300px !important;
+            height: 70px !important;
+            font-size: 22px !important;
+            font-weight: 800 !important;
+            border-radius: 8px !important;
+            background-color: #ff4b4b !important;
+            border-color: #ff4b4b !important;
+        }
+        .stButton > button[kind="primary"]:hover {
+            background-color: #ff6b6b !important;
+            border-color: #ff6b6b !important;
+        }
+        .main-button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            width: 100%;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Center the button using columns but handle response outside columns
+    col1, col2, col3 = st.columns([2, 1, 2])
+    with col2:
+        button_clicked = st.button("🔍 Get Expert Answer", type="primary", key="expert_answer_btn")
+    
+    # Handle button response outside of column context for full-width display
+    if button_clicked:
         if not user_question.strip():
             st.warning("📝 Please enter a question first.")
         else:
@@ -281,7 +453,14 @@ def main():
                         
                         # Display response - clean format without confidence or sources
                         st.markdown("### 💡 Expert Answer")
-                        st.markdown(response['answer'])
+                        
+                        # Clean the response text to remove formatting artifacts and document references
+                        clean_answer = clean_response_text(response['answer'])
+                        
+                        # Add occasional book reference
+                        final_answer = add_book_reference_occasionally(clean_answer)
+                        
+                        st.markdown(final_answer)
                         
                     except Exception as e:
                         st.error(f"❌ **Error generating response:** {str(e)}")
@@ -295,6 +474,65 @@ def main():
                             </ul>
                         </div>
                         """, unsafe_allow_html=True)
+    
+    # Sample questions - moved above tips
+    st.markdown("---")
+    
+    st.markdown("### 🎯 Example Questions")
+    st.markdown("Click any question below to auto-fill the input field:")
+    
+    # Refresh button below the heading
+    if st.button("🔄 Refresh", help="Get new example questions", key="refresh_questions", type="secondary"):
+        st.session_state.current_sample_questions = random.sample(all_questions, 5)
+        st.rerun()
+    
+    # Comprehensive list of finance questions covering various topics
+    all_questions = [
+        "What's the 50/30/20 budgeting rule?",
+        "How do I start an emergency fund?",
+        "What's the difference between 401k and IRA?",
+        "Should I pay off debt or invest first?",
+        "How much house can I afford?",
+        "What is compound interest and how does it work?",
+        "How do I improve my credit score?",
+        "What's the difference between stocks and bonds?",
+        "How much should I save for retirement?",
+        "What is dollar-cost averaging?",
+        "Should I get a financial advisor?",
+        "How do I create a budget from scratch?",
+        "What's the difference between Roth and traditional IRA?",
+        "How do I negotiate my salary?",
+        "What insurance do I really need?",
+        "How do I start investing with little money?",
+        "What's the avalanche vs snowball debt method?",
+        "How do I save money on groceries?",
+        "What are index funds and ETFs?",
+        "How do I plan for major expenses?",
+        "What's the difference between debit and credit cards?",
+        "How do I protect myself from identity theft?",
+        "What are the tax benefits of homeownership?",
+        "How do I choose a bank or credit union?",
+        "What's a good debt-to-income ratio?",
+        "How do I save for my child's education?",
+        "What are the basics of estate planning?",
+        "How do I manage money as a couple?",
+        "What's the difference between gross and net income?",
+        "How do I prepare for financial emergencies?"
+    ]
+    
+    # Randomly select 5 questions to display
+    if 'current_sample_questions' not in st.session_state:
+        st.session_state.current_sample_questions = random.sample(all_questions, 5)
+    
+    sample_questions = st.session_state.current_sample_questions
+    
+    # Display sample questions in responsive columns
+    cols = st.columns(len(sample_questions))
+    for i, question in enumerate(sample_questions):
+        with cols[i]:
+            if st.button(f"💭 {question}", key=f"sample_{i}", type="secondary", use_container_width=True):
+                st.session_state.selected_question = question
+                st.rerun()
     
     # Tips section
     st.markdown("---")
@@ -327,24 +565,6 @@ def main():
         - 📊 Tax planning & optimization
         - 💼 Retirement planning
         """)
-    
-    # Sample questions
-    st.markdown("### 🎯 Example Questions")
-    sample_questions = [
-        "What's the 50/30/20 budgeting rule?",
-        "How do I start an emergency fund?",
-        "What's the difference between 401k and IRA?",
-        "Should I pay off debt or invest first?",
-        "How much house can I afford?",
-    ]
-    
-    # Display sample questions in columns
-    cols = st.columns(len(sample_questions))
-    for i, question in enumerate(sample_questions):
-        with cols[i]:
-            if st.button(f"💭 {question}", key=f"sample_{i}"):
-                st.session_state.selected_question = question
-                st.rerun()
     
     # Disclaimer section - always visible for legal compliance
     st.markdown("---")
