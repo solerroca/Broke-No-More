@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Optional
 import base64
 import random
-import re
 
 from src.gemini_client import GeminiClient
 from src.knowledge_base_simple import SimpleKnowledgeBase
@@ -17,7 +16,7 @@ from config.settings import get_settings
 
 # Page configuration
 st.set_page_config(
-    page_title="💰 Personal Finance Q&A Assistant",
+    page_title="Personal Finance Q&A Assistant",
     page_icon="💰",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -169,140 +168,7 @@ def load_predefined_documents():
             # Silent loading - don't show warnings
             pass
 
-def clean_response_text(text):
-    """Clean response text to create highly readable, conversational paragraphs with proper structure."""
-    
-    # Remove document references and source mentions first
-    patterns_to_remove = [
-        r'according to[^.]*\.pdf[^.]*\.',
-        r'as mentioned in[^.]*\.pdf[^.]*\.',
-        r'source:[^.]*\.pdf[^.]*\.',
-        r'from[^.]*\.pdf[^.]*\.',
-        r'referenced in[^.]*\.pdf[^.]*\.',
-        r'\([^)]*\.pdf[^)]*\)',
-        r'as stated in the document[^.]*\.',
-        r'according to the source material[^.]*\.',
-        r'as outlined in[^.]*document[^.]*\.',
-        r'per the financial guide[^.]*\.',
-    ]
-    
-    for pattern in patterns_to_remove:
-        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
-    
-    # Fix problematic formatting
-    text = re.sub(r'(\w)\*(\w)', r'\1 \2', text)  
-    text = re.sub(r'(\w)_(\w)', r'\1 \2', text)   
-    text = re.sub(r'\.(\w)', r'. \1', text)
-    text = re.sub(r':(\w)', r': \1', text)
-    text = re.sub(r',(\w)', r', \1', text)
-    
-    # First, identify and properly format numbered points
-    # Look for patterns like "1. Title:" followed by explanation
-    text = re.sub(r'(\d+\.\s+)([^:]+:)\s*([^.]+\.)', r'\n\n**\1\2**\n\n\3\n', text)
-    
-    # Break after sentences before new numbered points
-    text = re.sub(r'(\.\s+)(\d+\.\s+[A-Z])', r'\1\n\n\2', text)
-    
-    # Add conversational transitions before numbered lists
-    text = re.sub(r'(\.)\s+(\d+\.\s+[A-Z][^:]*:)', r'\1\n\nHere are the key areas to focus on:\n\n\2', text)
-    
-    # Break up long paragraphs by splitting at natural points
-    # Split long sentences at conjunctions
-    sentences = text.split('. ')
-    processed_sentences = []
-    
-    for sentence in sentences:
-        sentence = sentence.strip()
-        if len(sentence) > 200:  # Very long sentences
-            # Split at natural break points
-            if '. Additionally, ' in sentence:
-                parts = sentence.split('. Additionally, ')
-                processed_sentences.append(parts[0] + '.')
-                processed_sentences.append('Additionally, ' + parts[1])
-            elif '. However, ' in sentence:
-                parts = sentence.split('. However, ')
-                processed_sentences.append(parts[0] + '.')
-                processed_sentences.append('However, ' + parts[1])
-            elif '. Consider ' in sentence:
-                parts = sentence.split('. Consider ')
-                processed_sentences.append(parts[0] + '.')
-                processed_sentences.append('Consider ' + parts[1])
-            elif '. Remember, ' in sentence:
-                parts = sentence.split('. Remember, ')
-                processed_sentences.append(parts[0] + '.')
-                processed_sentences.append('Remember, ' + parts[1])
-            else:
-                processed_sentences.append(sentence)
-        else:
-            processed_sentences.append(sentence)
-    
-    text = '. '.join(processed_sentences)
-    
-    # Add paragraph breaks for readability
-    text = re.sub(r'(\.\s+)([A-Z][^.]{30,})', r'\1\n\n\2', text)
-    
-    # Ensure proper spacing around numbered points
-    text = re.sub(r'(\d+\.\s+[^:]+:)\s*', r'\n\n**\1**\n\n', text)
-    
-    # Add explanatory paragraphs between numbered sections
-    text = re.sub(r'(\*\*\d+\.\s+[^*]+\*\*\n\n[^*]+)(\n\n\*\*\d+\.)', 
-                  r'\1\n\nMoving to the next important step:\2', text)
-    
-    # Clean up bullet points to be more readable
-    text = re.sub(r'([•·-]\s+)', r'\n\n• ', text)
-    
-    # Add contextual transitions
-    transitions = [
-        (r'(\*\*1\.[^*]+\*\*)', r'Let\'s start with the foundation:\n\n\1'),
-        (r'(\*\*2\.[^*]+\*\*)', r'Next, we need to address:\n\n\1'),
-        (r'(\*\*3\.[^*]+\*\*)', r'The third crucial step involves:\n\n\1'),
-        (r'(\*\*4\.[^*]+\*\*)', r'Another essential component is:\n\n\1'),
-        (r'(\*\*5\.[^*]+\*\*)', r'Don\'t overlook this important area:\n\n\1'),
-    ]
-    
-    for pattern, replacement in transitions:
-        text = re.sub(pattern, replacement, text)
-    
-    # Clean up excessive line breaks and formatting
-    text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)  # Max double line breaks
-    text = re.sub(r'[ \t]+', ' ', text)  # Single spaces
-    text = re.sub(r'\n\s+', '\n', text)  # No leading spaces on lines
-    
-    # Fix formatting issues
-    text = re.sub(r'\.\.+', '.', text)
-    text = re.sub(r'\*\*\s*\*\*', '', text)  # Remove empty bold tags
-    
-    # Add a concluding thought for long advice
-    if len(text) > 800 and not text.endswith(('journey.', 'future.', 'success.', 'together.')):
-        text += '\n\nRemember, financial success is a journey that requires patience, communication, and consistent effort. Take it one step at a time, and don\'t hesitate to seek professional guidance when needed.'
-    
-    return text.strip()
 
-def add_book_reference_occasionally(text):
-    """Add reference to 'Broke No More' by Sasha Albright every 4-5 answers."""
-    # Initialize answer counter if not exists
-    if 'answer_count' not in st.session_state:
-        st.session_state.answer_count = 0
-    
-    # Increment counter
-    st.session_state.answer_count += 1
-    
-    # Add book reference every 4-5 answers (randomly between 4 and 5)
-    reference_frequency = random.randint(4, 5)
-    
-    if st.session_state.answer_count % reference_frequency == 0:
-        book_references = [
-            "\n\n*This advice aligns with principles from 'Broke No More' by Sasha Albright.*",
-            "\n\n*For more detailed strategies, consider reading 'Broke No More' by Sasha Albright.*",
-            "\n\n*These concepts are further explored in 'Broke No More' by Sasha Albright.*",
-            "\n\n*This approach is consistent with the financial wisdom found in 'Broke No More' by Sasha Albright.*"
-        ]
-        
-        # Randomly select one reference style
-        selected_reference = random.choice(book_references)
-        text += selected_reference
-    
-    return text
 
 def load_book_image():
     """Load and encode the promotional book image."""
@@ -454,11 +320,8 @@ def main():
                         # Display response - clean format without confidence or sources
                         st.markdown("### 💡 Expert Answer")
                         
-                        # Clean the response text to remove formatting artifacts and document references
-                        clean_answer = clean_response_text(response['answer'])
-                        
-                        # Add occasional book reference
-                        final_answer = add_book_reference_occasionally(clean_answer)
+                        # Use the LLM's natural formatting directly
+                        final_answer = response['answer']
                         
                         st.markdown(final_answer)
                         
