@@ -10,9 +10,22 @@ load_dotenv()
 class Settings:
     """Application settings and configuration."""
     
-    # API Configuration
-    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    # API Configuration - Support both Streamlit Cloud secrets and local env vars
+    @property 
+    def GEMINI_API_KEY(self) -> str:
+        try:
+            import streamlit as st
+            return st.secrets.get("GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
+        except:
+            return os.getenv("GEMINI_API_KEY", "")
+    
+    @property
+    def GEMINI_MODEL(self) -> str:
+        try:
+            import streamlit as st
+            return st.secrets.get("GEMINI_MODEL", os.getenv("GEMINI_MODEL", "gemini-1.5-flash"))
+        except:
+            return os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
     
     # App Configuration
@@ -38,10 +51,10 @@ class Settings:
     PAGE_ICON: str = "💰"
     LAYOUT: str = "wide"
     
-    @classmethod
-    def validate_api_key(cls) -> bool:
+    def validate_api_key(self) -> bool:
         """Validate that the Gemini API key is set."""
-        return bool(cls.GEMINI_API_KEY and cls.GEMINI_API_KEY != "your_gemini_api_key_here")
+        api_key = self.GEMINI_API_KEY
+        return bool(api_key and api_key != "your_gemini_api_key_here")
     
     @classmethod
     def get_file_upload_config(cls) -> Dict[str, Any]:
