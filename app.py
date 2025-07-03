@@ -22,33 +22,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Debug section for Streamlit Cloud (remove after fixing)
-st.sidebar.write("🔧 **Debug Info (for deployment troubleshooting):**")
-try:
-    if hasattr(st, 'secrets'):
-        st.sidebar.write("✅ st.secrets is available")
-        if "GEMINI_API_KEY" in st.secrets:
-            api_key_preview = st.secrets["GEMINI_API_KEY"][:10] + "..." if st.secrets["GEMINI_API_KEY"] else "Empty"
-            st.sidebar.write(f"✅ GEMINI_API_KEY in secrets: {api_key_preview}")
-        else:
-            st.sidebar.write("❌ GEMINI_API_KEY not in secrets")
-        
-        if "GEMINI_MODEL" in st.secrets:
-            st.sidebar.write(f"✅ GEMINI_MODEL in secrets: {st.secrets.get('GEMINI_MODEL', 'Not set')}")
-        else:
-            st.sidebar.write("❌ GEMINI_MODEL not in secrets")
-    else:
-        st.sidebar.write("❌ st.secrets not available")
-except Exception as e:
-    st.sidebar.write(f"❌ Secrets access error: {str(e)}")
 
-# Check os.getenv as fallback
-api_key_env = os.getenv("GEMINI_API_KEY", "")
-if api_key_env:
-    api_key_preview = api_key_env[:10] + "..." if api_key_env else "Empty"
-    st.sidebar.write(f"✅ GEMINI_API_KEY in env: {api_key_preview}")
-else:
-    st.sidebar.write("❌ GEMINI_API_KEY not in environment")
 
 # Custom CSS for better styling
 st.markdown("""
@@ -120,31 +94,9 @@ def initialize_app():
     try:
         settings = get_settings()
         
-        # Get API key directly for Streamlit Cloud compatibility
-        api_key = None
-        try:
-            # Try Streamlit secrets first
-            if hasattr(st, 'secrets') and "GEMINI_API_KEY" in st.secrets:
-                api_key = st.secrets["GEMINI_API_KEY"]
-                st.sidebar.write("🔑 Using API key from Streamlit secrets")
-            else:
-                # Fallback to environment variable
-                api_key = os.getenv("GEMINI_API_KEY", "")
-                if api_key:
-                    st.sidebar.write("🔑 Using API key from environment")
-                else:
-                    st.sidebar.write("❌ No API key found in secrets or environment")
-        except Exception as e:
-            st.sidebar.write(f"❌ API key access error: {str(e)}")
-            api_key = os.getenv("GEMINI_API_KEY", "")
-        
-        # Initialize Gemini client with direct API key
+        # Initialize Gemini client
         if 'gemini_client' not in st.session_state:
-            if api_key:
-                st.session_state.gemini_client = GeminiClient(api_key)
-                st.sidebar.write("✅ Gemini client initialized successfully")
-            else:
-                raise ValueError("GEMINI_API_KEY is not set or invalid")
+            st.session_state.gemini_client = GeminiClient(settings.GEMINI_API_KEY)
         
         # Initialize knowledge base
         if 'knowledge_base' not in st.session_state:
