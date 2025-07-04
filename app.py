@@ -322,10 +322,53 @@ def main():
                         # Display response - clean format without confidence or sources
                         st.markdown("### 💡 Expert Answer")
                         
-                        # Use the LLM's natural formatting directly
+                        # Apply consistent CSS styling for the answer
+                        st.markdown("""
+                        <style>
+                        .expert-answer {
+                            font-family: 'Source Sans Pro', sans-serif;
+                            font-size: 16px !important;
+                            line-height: 1.6;
+                            color: #262730;
+                            background-color: #ffffff;
+                            padding: 20px;
+                            border-radius: 8px;
+                            border: 1px solid #e6e6e6;
+                        }
+                        .expert-answer p {
+                            font-size: 16px !important;
+                            margin: 16px 0 !important;
+                            font-weight: 400 !important;
+                        }
+                        .expert-answer strong, .expert-answer b {
+                            font-weight: 600 !important;
+                            font-size: 16px !important;
+                        }
+                        .expert-answer em, .expert-answer i {
+                            font-style: italic !important;
+                            font-size: 16px !important;
+                            font-weight: 400 !important;
+                        }
+                        .expert-answer ul, .expert-answer ol {
+                            margin: 16px 0 !important;
+                        }
+                        .expert-answer li {
+                            font-size: 16px !important;
+                            margin: 8px 0 !important;
+                            font-weight: 400 !important;
+                        }
+                        .expert-answer h1, .expert-answer h2, .expert-answer h3, .expert-answer h4, .expert-answer h5, .expert-answer h6 {
+                            font-size: 16px !important;
+                            font-weight: 600 !important;
+                            margin: 16px 0 !important;
+                        }
+                        </style>
+                        """, unsafe_allow_html=True)
+                        
+                        # Use the LLM's natural formatting directly with consistent styling
                         final_answer = response['answer']
                         
-                        st.markdown(final_answer)
+                        st.markdown(f'<div class="expert-answer">{final_answer}</div>', unsafe_allow_html=True)
                         
                     except Exception as e:
                         st.error(f"❌ **Error generating response:** {str(e)}")
