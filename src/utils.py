@@ -144,7 +144,17 @@ def validate_finance_question(question: str) -> bool:
         'insurance', 'risk', 'return', 'profit', 'loss', 'dividend', 'interest',
         'rate', 'apr', 'apy', 'compound', 'simple', 'principal', 'balance',
         'payment', 'pay', 'owe', 'owing', 'afford', 'emergency', 'goal',
-        'wealth', 'rich', 'poor', '401k', 'ira', 'roth', 'traditional'
+        'wealth', 'rich', 'poor', '401k', 'ira', 'roth', 'traditional',
+        # Career and income related
+        'salary', 'wage', 'wages', 'negotiate', 'negotiation', 'raise', 'promotion',
+        'compensation', 'paycheck', 'bonus', 'benefits', 'career', 'job', 'work',
+        'employment', 'employer', 'employee', 'freelance', 'contractor', 'hourly',
+        # Real estate and major purchases
+        'house', 'home', 'rent', 'renting', 'buying', 'selling', 'property',
+        'realtor', 'downpayment', 'closing', 'refinance', 'equity',
+        # Additional finance terms
+        'networth', 'cashflow', 'frugal', 'cheap', 'expensive', 'value',
+        'worth', 'cost', 'price', 'deal', 'bargain', 'discount', 'sale'
     ]
     
     question_lower = question.lower()

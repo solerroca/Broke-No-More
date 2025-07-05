@@ -88,12 +88,16 @@ GUIDELINES:
 • Include helpful tips and best practices
 • Make your advice actionable and specific
 
-CRITICAL - RESPONSE FORMAT AND REFERENCE REQUIREMENTS:
-Please write your response in a highly educational and easy-to-read format. Begin with a brief introduction that explains the topic or task in simple terms, so that even someone new to the subject can understand. Use clear, concise language throughout.
+CRITICAL - RESPONSE FORMAT AND STRUCTURE:
+Write your response in a natural, conversational style that flows well. Start directly with helpful information about the topic - no greetings or introductory phrases needed.
 
-Organize the main content into well-structured paragraphs. Each paragraph should focus on a single idea or step, providing enough detail to guide the reader without overwhelming them. If you need to list items or steps, use bullet points sparingly to improve the clarity andintegrate lists naturally into the text. Make sure the entire answer uses the same font and font size
+Structure your content for maximum readability:
+• Use clear subheaders (##) to organize main sections such as "Understanding the Basics", "Key Steps", "Important Considerations", "Common Mistakes", or "Next Steps"
+• Write focused paragraphs of 3-4 sentences each, with each paragraph covering one main idea
+• Use bullet points strategically for lists of steps, benefits, tips, or examples
+• End with practical next steps or encouragement
 
-Conclude with a short summary or a helpful tip that reinforces the key points. Make sure the overall tone is friendly and encouraging, inviting the reader to learn and explore further.
+Make sure your response flows naturally from section to section without artificial transitions or structural announcements.
 
 IMPORTANT - DOCUMENT REFERENCES:
 • Never mention "based on provided text", "reference materials", "documents", or similar phrases
@@ -106,7 +110,7 @@ REFERENCE MATERIALS (use this knowledge naturally in your response):
 
 QUESTION: {question}
 
-Provide a comprehensive, expert response that educates and empowers the person to make informed financial decisions:"""
+Provide a comprehensive, well-structured expert response that educates and empowers the person to make informed financial decisions:"""
 
         return prompt
     

@@ -351,22 +351,88 @@ def main():
                         }
                         .expert-answer ul, .expert-answer ol {
                             margin: 16px 0 !important;
+                            padding-left: 20px !important;
                         }
                         .expert-answer li {
                             font-size: 16px !important;
-                            margin: 8px 0 !important;
+                            margin: 6px 0 !important;
                             font-weight: 400 !important;
+                            line-height: 1.5;
                         }
-                        .expert-answer h1, .expert-answer h2, .expert-answer h3, .expert-answer h4, .expert-answer h5, .expert-answer h6 {
+                        /* Make subheaders visually distinct but proportional */
+                        .expert-answer h1 {
+                            font-size: 20px !important;
+                            font-weight: 700 !important;
+                            margin: 24px 0 12px 0 !important;
+                            color: #1e3a8a !important;
+                            border-bottom: 2px solid #e6e6e6 !important;
+                            padding-bottom: 8px !important;
+                        }
+                        .expert-answer h2 {
+                            font-size: 18px !important;
+                            font-weight: 600 !important;
+                            margin: 20px 0 10px 0 !important;
+                            color: #1e40af !important;
+                        }
+                        .expert-answer h3 {
                             font-size: 16px !important;
                             font-weight: 600 !important;
-                            margin: 16px 0 !important;
+                            margin: 16px 0 8px 0 !important;
+                            color: #3b82f6 !important;
+                        }
+                        .expert-answer h4, .expert-answer h5, .expert-answer h6 {
+                            font-size: 16px !important;
+                            font-weight: 600 !important;
+                            margin: 16px 0 8px 0 !important;
+                            color: #64748b !important;
                         }
                         </style>
                         """, unsafe_allow_html=True)
                         
-                        # Use the LLM's natural formatting directly with consistent styling
-                        final_answer = response['answer']
+                        # Process markdown to HTML for proper header rendering
+                        import re
+                        
+                        def convert_markdown_to_html(text):
+                            try:
+                                # Try using markdown library if available
+                                import markdown
+                                html = markdown.markdown(text)
+                                return html
+                            except ImportError:
+                                # Fallback to simple regex conversion
+                                # Convert markdown headers to HTML headers
+                                text = re.sub(r'^### (.*?)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
+                                text = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
+                                text = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
+                                
+                                # Convert markdown lists to HTML lists
+                                lines = text.split('\n')
+                                html_lines = []
+                                in_list = False
+                                
+                                for line in lines:
+                                    if line.strip().startswith('•') or line.strip().startswith('-'):
+                                        if not in_list:
+                                            html_lines.append('<ul>')
+                                            in_list = True
+                                        item_text = line.strip()[1:].strip()
+                                        html_lines.append(f'<li>{item_text}</li>')
+                                    else:
+                                        if in_list:
+                                            html_lines.append('</ul>')
+                                            in_list = False
+                                        if line.strip() and not line.strip().startswith('<'):
+                                            html_lines.append(f'<p>{line.strip()}</p>')
+                                        else:
+                                            html_lines.append(line)
+                                
+                                if in_list:
+                                    html_lines.append('</ul>')
+                                
+                                return '\n'.join(html_lines)
+                        
+                        # Convert markdown to HTML
+                        final_answer = convert_markdown_to_html(response['answer'])
                         
                         st.markdown(f'<div class="expert-answer">{final_answer}</div>', unsafe_allow_html=True)
                         
@@ -388,11 +454,6 @@ def main():
     
     st.markdown("### 🎯 Example Questions")
     st.markdown("Click any question below to auto-fill the input field:")
-    
-    # Refresh button below the heading
-    if st.button("🔄 Refresh", help="Get new example questions", key="refresh_questions", type="secondary"):
-        st.session_state.current_sample_questions = random.sample(all_questions, 5)
-        st.rerun()
     
     # Comprehensive list of finance questions covering various topics
     all_questions = [
@@ -427,6 +488,11 @@ def main():
         "What's the difference between gross and net income?",
         "How do I prepare for financial emergencies?"
     ]
+    
+    # Refresh button below the heading
+    if st.button("🔄 Refresh", help="Get new example questions", key="refresh_questions", type="secondary"):
+        st.session_state.current_sample_questions = random.sample(all_questions, 5)
+        st.rerun()
     
     # Randomly select 5 questions to display
     if 'current_sample_questions' not in st.session_state:
