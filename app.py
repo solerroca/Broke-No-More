@@ -86,6 +86,69 @@ st.markdown("""
         max-width: 800px;
         margin: 0 auto;
     }
+    
+    /* 📱 MOBILE-FRIENDLY STYLES */
+    @media (max-width: 768px) {
+        /* Adjust main header for mobile */
+        .main-header {
+            padding: 1.5rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .main-header h1 {
+            font-size: 1.8rem !important;
+            margin-bottom: 0.5rem;
+        }
+        
+        .main-header p {
+            font-size: 0.9rem !important;
+        }
+        
+        /* Better spacing for mobile */
+        .main .block-container {
+            padding-top: 1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        /* Make buttons bigger and more touch-friendly */
+        .stButton > button {
+            font-size: 0.9rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            min-height: 48px; /* Good for touch screens */
+        }
+        
+        /* Improve text readability on mobile */
+        .stMarkdown {
+            font-size: 1rem;
+        }
+        
+        /* Better spacing for info boxes */
+        .info-box, .warning-box, .success-box {
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        /* Make promotional book image smaller on mobile */
+        .mobile-book-promo img {
+            max-width: 200px !important;
+            height: auto;
+        }
+        
+        /* Make book promotional section mobile-friendly */
+        .main-header + div img {
+            max-width: 200px !important;
+        }
+    }
+    
+    /* 📱 TABLET STYLES (medium screens) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .main .block-container {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -214,7 +277,7 @@ def main():
             </div>
             <a href="https://www.amazon.com/Broke-More-Easy-Follow-Strategies/dp/196628800X/ref=sr_1_2?crid=1I2229DFKOWE2&dib=eyJ2IjoiMSJ9.Y3EC7BYPotcNcCpQkFuWgyTURtZXDgSMa7v87YOnt6xEb5zqzgwRhigftpmGRMm4li93dXytUd--woy-3Rgy2IyLVY6WKfoqkPhv2wCyF6Hfw0BtnlDDAko1UEaUoucVe6Xkm91djx57Bhqy8Dzs2eNZKDL91bhxdBCwFUA-rQUqzyTIp7oB0OG_dWcP4nj1xEcm0eVBjM4sSSdmHdwiq2BQAFp1p9_rLQWo2z-n0_M.ogRhG6GClaDbNPhSUSXTVFswk4_0KRCJLAb9iR8n0S4&dib_tag=se&keywords=broke+no+more&qid=1751304047&sprefix=broke+no+more%2Caps%2C171&sr=8-2" target="_blank" style="text-decoration: none; display: block;">
                 <div style="display: inline-block; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 25px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 15px rgba(0,0,0,0.08)'">
-                    <img src="data:image/png;base64,{book_image_data}" alt="Broke No More - The Gen Z Guide to Money Mastery" style="max-width: 280px; height: auto; border-radius: 8px;">
+                    <img src="data:image/png;base64,{book_image_data}" alt="Broke No More - The Gen Z Guide to Money Mastery" style="max-width: 280px; height: auto; border-radius: 8px;" class="responsive-book-img">
                     <div style="margin-top: 12px;">
                         <h3 style="color: #2c3e50; margin: 0; font-size: 1.2em; font-weight: 600;">'Broke No More'</h3>
                         <p style="color: #7f8c8d; margin: 4px 0 0 0; font-size: 0.9em;">📚 Link to the book</p>
@@ -500,13 +563,30 @@ def main():
     
     sample_questions = st.session_state.current_sample_questions
     
-    # Display sample questions in responsive columns
-    cols = st.columns(len(sample_questions))
-    for i, question in enumerate(sample_questions):
-        with cols[i]:
-            if st.button(f"💭 {question}", key=f"sample_{i}", type="secondary", use_container_width=True):
-                st.session_state.selected_question = question
-                st.rerun()
+    # Display sample questions in mobile-friendly layout
+    # Create a responsive grid that works well on both mobile and desktop
+    
+    # On mobile: 1 column, on desktop: 2 columns per row
+    if len(sample_questions) >= 4:
+        # Create mobile-friendly rows
+        for i in range(0, len(sample_questions), 2):
+            row_cols = st.columns(2)
+            for j, col in enumerate(row_cols):
+                if i + j < len(sample_questions):
+                    question = sample_questions[i + j]
+                    button_key = f"sample_{i + j}"
+                    with col:
+                        if st.button(f"💭 {question}", key=button_key, type="secondary", use_container_width=True):
+                            st.session_state.selected_question = question
+                            st.rerun()
+    else:
+        # For fewer questions, use regular column layout
+        cols = st.columns(len(sample_questions))
+        for i, question in enumerate(sample_questions):
+            with cols[i]:
+                if st.button(f"💭 {question}", key=f"sample_{i}", type="secondary", use_container_width=True):
+                    st.session_state.selected_question = question
+                    st.rerun()
     
     # Tips section
     st.markdown("---")
