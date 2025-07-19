@@ -138,7 +138,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Temes en què puc ajudar:',
         'disclaimer': 'Avís Legal',
         'built_on': 'Basat en Principis Monetaris de',
-        'disclaimer_text': 'La informació proporcionada per aquest Assistent de Finances Personals Q&A és només per a fins educatius i informatius i no s\'ha de considerar com a assessorament financer, d\'inversió, fiscal o legal personalitzat. Aquesta eina impulsada per IA proporciona orientació general basada en principis financers comuns i pot no ser adequada per a la vostra situació financera específica.<br><br>Sempre consulteu amb assessors financers qualificats, professionals d\'impostos o altres experts llicenciats abans de prendre decisions financeres importants. El rendiment passat no garanteix resultats futurs. Totes les inversions comporten risc, incloent-hi la pèrdua potencial del capital.<br><br>En utilitzar aquest servei, reconeixeu que sou l\'únic responsable de les vostres decisions financeres i que ni l\'aplicació ni els seus creadors són responsables de qualsevol pèrdua financera o dany resultant de l\'ús d\'aquesta informació.',
+        'disclaimer_text': 'La informació proporcionada per aquest Assistent de Finances Personals Q&A és només per a fins educatius i informatius i no s\'ha de considerar com a assessorament financer, d\'inversió, fiscal o legal personalitzat. Aquesta eina impulsada per IA proporciona orientació general basada en principis financers comuns i pot no ser adequada per a la vostra situació financera específica.<br><br>Sempre consulteu amb assessors financers qualificats, professionals d\'impostos o altres experts llicenciats abans de prendre decisions financeres importants. El rendiment pasado no garanteix resultats futurs. Totes les inversions comporten risc, incloent-hi la pèrdua potencial del capital.<br><br>En utilitzar aquest servei, reconeixeu que sou l\'únic responsable de les vostres decisions financeres i que ni l\'aplicació ni els seus creadors són responsables de qualsevol pèrdua financera o dany resultant de l\'ús d\'aquesta informació.',
         'questions': [
             "Què és la regla pressupostària del 50/30/20?",
             "Com puc començar un fons d'emergència?",
@@ -223,72 +223,42 @@ TRANSLATIONS = {
 }
 
 def render_language_selector():
-    """Render the language selector with flags only - compact and mobile-friendly."""
+    """Render the language selector with uniform flag design."""
     
     # Initialize language in session state
     if 'selected_language' not in st.session_state:
         st.session_state.selected_language = 'en'
     
-    # Display current language selector - flags only for space efficiency
     current_lang = st.session_state.selected_language
     
-    # Language selection with flags only
-    with st.container():
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            # English flag button
-            if st.button("🇺🇸", key="lang_en_btn", use_container_width=True, 
-                        help="English"):
-                st.session_state.selected_language = 'en'
-                st.rerun()
-        
-        with col2:
-            # Catalan flag button
-            catalan_flag_data = load_custom_flag('catalan-flag')
-            if catalan_flag_data:
-                # Use HTML button-like behavior for custom flag
-                flag_clicked = st.button("🏴", key="lang_ca_btn", use_container_width=True, 
-                                        help="Català")
-                if flag_clicked:
-                    st.session_state.selected_language = 'ca'
-                    st.rerun()
-                # Replace the button with custom flag image using JavaScript for click handling
-                st.markdown(f"""
-                <style>
-                div[data-testid="stButton"] button[kind="secondary"]:has([aria-label="Català"]) {{
-                    background-image: url("{catalan_flag_data}");
-                    background-size: 24px 18px;
-                    background-repeat: no-repeat;
-                    background-position: center;
-                    font-size: 0; /* Hide emoji text */
-                    min-height: 38px;
-                }}
-                div[data-testid="stButton"] button[kind="secondary"]:has([aria-label="Català"]):hover {{
-                    background-color: #f0f0f0;
-                    border: 2px solid #0066cc;
-                }}
-                </style>
-                """, unsafe_allow_html=True)
+    # Load custom Catalan flag data
+    catalan_flag_data = load_custom_flag('catalan-flag')
+    
+    # Create columns for the language buttons (no container wrapper)
+    cols = st.columns(4)
+    
+    languages = [
+        ('en', '🇺🇸', 'English'),
+        ('ca', catalan_flag_data if catalan_flag_data else '🏴', 'Català'),
+        ('ko', '🇰🇷', '한국어'),
+        ('es', '🇪🇸', 'Español')
+    ]
+    
+    for i, (lang_code, flag_content, lang_name) in enumerate(languages):
+        with cols[i]:
+            # Check if this is the active language
+            is_active = current_lang == lang_code
+            active_class = "active" if is_active else ""
+            
+            # Use emoji for Catalan since Streamlit buttons can't display custom images
+            if lang_code == 'ca':
+                display_flag = '🏴'  # Use emoji fallback for button
             else:
-                # Fallback to emoji if custom flag fails to load
-                if st.button("🏴", key="lang_ca_btn_fallback", use_container_width=True, 
-                            help="Català"):
-                    st.session_state.selected_language = 'ca'
-                    st.rerun()
-        
-        with col3:
-            # Korean flag button
-            if st.button("🇰🇷", key="lang_ko_btn", use_container_width=True,
-                        help="한국어"):
-                st.session_state.selected_language = 'ko'
-                st.rerun()
-        
-        with col4:
-            # Spanish flag button
-            if st.button("🇪🇸", key="lang_es_btn", use_container_width=True,
-                        help="Español"):
-                st.session_state.selected_language = 'es'
+                display_flag = flag_content
+            
+            # Use a simple button approach
+            if st.button(f"{display_flag}", key=f"lang_{lang_code}", help=lang_name):
+                st.session_state.selected_language = lang_code
                 st.rerun()
 
 def get_text(key):
@@ -329,6 +299,36 @@ st.markdown("""
     /* 🎨 BASE STYLES - MOBILE FIRST APPROACH */
     * {
         box-sizing: border-box;
+    }
+    
+    /* Remove any default margins and padding that could create empty space */
+    .main .block-container {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Ensure no extra space before language selector */
+    .main .block-container > div:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Remove any top spacing from the very first element */
+    .main .block-container > div:first-child > div:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Force remove any Streamlit default spacing */
+    .main .block-container .element-container:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Remove header spacing from Streamlit */
+    .main .block-container > .element-container:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
     
     .main-header {
@@ -409,33 +409,43 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
     }
     
-    /* 🌍 LANGUAGE SELECTOR - FLAGS ONLY */
-    div[data-testid="column"] {
-        padding: 0 0.25rem;
-    }
-    
-    /* Language flag buttons styling - specific to language selector */
-    button[key^="lang_"] {
-        font-size: 1.5rem !important;
-        padding: 0.5rem !important;
-        min-height: 44px !important;
-        min-width: 44px !important;
-        border-radius: 8px !important;
-        border: 2px solid transparent !important;
+    /* 🌍 LANGUAGE SELECTOR - PROFESSIONAL FLAGS */
+    /* Style the language buttons directly without container */
+    .stButton > button {
+        width: 60px !important;
+        height: 60px !important;
+        border: 2px solid #e1e5e9 !important;
+        border-radius: 12px !important;
         background-color: #ffffff !important;
-        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        outline: none !important;
+        margin: 0 auto !important;
+        font-size: 1.8rem !important;
+        padding: 0 !important;
     }
     
-    button[key^="lang_"]:hover {
-        background-color: #f0f2f6 !important;
+    .stButton > button:hover {
+        background-color: #f8fafc !important;
         border-color: #0066cc !important;
-        transform: scale(1.05) !important;
+        transform: translateY(-2px) scale(1.05) !important;
+        box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15) !important;
     }
     
-    button[key^="lang_"]:active,
-    button[key^="lang_"]:focus {
+    .stButton > button:active,
+    .stButton > button:focus {
         border-color: #0066cc !important;
-        box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2) !important;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2) !important;
+        transform: translateY(0) scale(1) !important;
+    }
+    
+    /* Add spacing below language selector */
+    .stButton {
+        margin-bottom: 1.5rem !important;
     }
     
     /* 🎭 EXAMPLE QUESTIONS */
@@ -478,17 +488,12 @@ st.markdown("""
             padding: 0.75rem !important;
         }
         
-        /* Language flags - maintain size and improve spacing on mobile */
-        div[data-testid="column"] {
-            padding: 0.1rem;
-        }
-        
-        /* Language flag buttons - keep them visible on mobile */
-        button[key^="lang_"] {
-            font-size: 1.3rem !important;
-            padding: 0.4rem !important;
-            min-height: 48px !important;
-            min-width: 48px !important;
+        /* Language selector mobile optimizations */
+        .stButton > button {
+            width: 56px !important;
+            height: 56px !important;
+            border-radius: 14px !important;
+            font-size: 1.6rem !important;
         }
         
         /* Other buttons (non-language) styling for mobile */
@@ -638,6 +643,37 @@ st.markdown("""
         .stButton, .main-header {
             display: none !important;
         }
+    }
+    /* 🚫 REMOVE ALL TOP SPACING AND EMPTY CONTAINERS */
+    .main .block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 2rem !important;
+        margin-top: 0rem !important;
+    }
+    
+    /* Remove Streamlit's default top padding */
+    .stApp > header {
+        display: none !important;
+    }
+    
+    /* Remove any empty containers */
+    .stApp .main .block-container .element-container:empty {
+        display: none !important;
+    }
+    
+    /* Remove top margin from first element */
+    .stApp .main .block-container > div:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Remove empty vertical space */
+    .stVerticalBlock {
+        gap: 0 !important;
+    }
+    
+    .stVerticalBlock > div:empty {
+        display: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
