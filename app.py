@@ -36,6 +36,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Topics I can help with:',
         'disclaimer': 'Disclaimer',
         'built_on': 'Built on Money Principles from',
+        'disclaimer_text': 'The information provided by this Personal Finance Q&A Assistant is for educational and informational purposes only and should not be considered as personalized financial, investment, tax, or legal advice. This AI-powered tool provides general guidance based on common financial principles and may not be suitable for your specific financial situation.<br><br>Always consult with qualified financial advisors, tax professionals, or other licensed experts before making important financial decisions. Past performance does not guarantee future results. All investments carry risk, including potential loss of principal.<br><br>By using this service, you acknowledge that you are solely responsible for your financial decisions and that neither the app nor its creators are liable for any financial losses or damages resulting from your use of this information.',
         'questions': [
             "What's the 50/30/20 budgeting rule?",
             "How do I start an emergency fund?",
@@ -86,6 +87,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Temas en los que puedo ayudar:',
         'disclaimer': 'Aviso Legal',
         'built_on': 'Basado en Principios Monetarios de',
+        'disclaimer_text': 'La información proporcionada por este Asistente de Finanzas Personales Q&A es solo para fines educativos e informativos y no debe considerarse como asesoramiento financiero, de inversión, fiscal o legal personalizado. Esta herramienta impulsada por IA proporciona orientación general basada en principios financieros comunes y puede no ser adecuada para su situación financiera específica.<br><br>Siempre consulte con asesores financieros calificados, profesionales de impuestos u otros expertos licenciados antes de tomar decisiones financieras importantes. El rendimiento pasado no garantiza resultados futuros. Todas las inversiones conllevan riesgo, incluida la pérdida potencial del capital.<br><br>Al usar este servicio, usted reconoce que es el único responsable de sus decisiones financieras y que ni la aplicación ni sus creadores son responsables de cualquier pérdida financiera o daño resultante del uso de esta información.',
         'questions': [
             "¿Qué es la regla presupuestaria 50/30/20?",
             "¿Cómo empiezo un fondo de emergencia?",
@@ -136,6 +138,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Temes en què puc ajudar:',
         'disclaimer': 'Avís Legal',
         'built_on': 'Basat en Principis Monetaris de',
+        'disclaimer_text': 'La informació proporcionada per aquest Assistent de Finances Personals Q&A és només per a fins educatius i informatius i no s\'ha de considerar com a assessorament financer, d\'inversió, fiscal o legal personalitzat. Aquesta eina impulsada per IA proporciona orientació general basada en principis financers comuns i pot no ser adequada per a la vostra situació financera específica.<br><br>Sempre consulteu amb assessors financers qualificats, professionals d\'impostos o altres experts llicenciats abans de prendre decisions financeres importants. El rendiment passat no garanteix resultats futurs. Totes les inversions comporten risc, incloent-hi la pèrdua potencial del capital.<br><br>En utilitzar aquest servei, reconeixeu que sou l\'únic responsable de les vostres decisions financeres i que ni l\'aplicació ni els seus creadors són responsables de qualsevol pèrdua financera o dany resultant de l\'ús d\'aquesta informació.',
         'questions': [
             "Què és la regla pressupostària 50/30/20?",
             "Com començo un fons d'emergència?",
@@ -165,6 +168,57 @@ TRANSLATIONS = {
 - 🛡️ Assegurances i planificació de protecció
 - 📊 Planificació fiscal i optimització
 - 💼 Planificació de jubilació'''
+    },
+    'ko': {
+        'title': '개인 재정 Q&A 어시스턴트',
+        'subtitle': 'AI와 큐레이션된 지식으로 전문적인 재정 조언을 받으세요',
+        'question_header': '💬 개인 재정 질문하기',
+        'question_placeholder': '예: 초보자로서 투자를 어떻게 시작해야 하나요? 예산을 세우는 가장 좋은 방법은 무엇인가요?',
+        'question_help': '예산, 투자, 저축, 부채 관리 또는 기타 재정 주제에 대한 구체적인 질문을 하세요.',
+        'get_answer_btn': '🔍 전문가 답변 받기',
+        'enter_question': '📝 먼저 질문을 입력해 주세요.',
+        'not_finance': '⚠️ 재정 질문이 아닙니다',
+        'not_finance_text': '이 앱은 개인 재정 질문을 위해 설계되었습니다. 예산, 저축, 투자, 부채 관리, 은퇴 계획, 보험 또는 세금과 같은 주제에 대해 질문해 주세요.',
+        'expert_answer': '💡 전문가 답변',
+        'thinking': '🤔 질문을 생각하고 분석하고 있습니다...',
+        'example_questions': '🎯 예시 질문',
+        'example_subtitle': '아래 질문을 클릭하면 입력란이 자동으로 채워집니다:',
+        'refresh_btn': '🔄 새로고침',
+        'quick_tips': '📋 빠른 팁',
+        'better_answers': '💡 더 나은 답변을 얻는 방법:',
+        'topics_help': '📚 도움을 드릴 수 있는 주제:',
+        'disclaimer': '면책조항',
+        'built_on': '재정 원칙 기반',
+        'disclaimer_text': '이 개인 재정 Q&A 어시스턴트에서 제공하는 정보는 교육 및 정보 제공 목적으로만 제공되며 개인화된 재정, 투자, 세금 또는 법률 조언으로 간주되어서는 안 됩니다. 이 AI 기반 도구는 일반적인 재정 원칙에 기반한 일반적인 지침을 제공하며 귀하의 특정 재정 상황에 적합하지 않을 수 있습니다.<br><br>중요한 재정 결정을 내리기 전에 항상 자격을 갖춘 재정 고문, 세무 전문가 또는 기타 면허를 가진 전문가와 상담하십시오. 과거 성과가 미래 결과를 보장하지 않습니다. 모든 투자는 원금 손실 가능성을 포함하여 위험을 수반합니다.<br><br>이 서비스를 사용함으로써 귀하는 자신의 재정 결정에 대해 전적으로 책임을 지며, 앱이나 그 제작자들이 이 정보의 사용으로 인한 재정적 손실이나 손해에 대해 책임지지 않음을 인정합니다.',
+        'questions': [
+            "50/30/20 예산 규칙이란 무엇인가요?",
+            "비상 자금을 어떻게 시작하나요?",
+            "401k와 IRA의 차이점은 무엇인가요?",
+            "부채를 갚을지 투자를 할지 먼저 결정해야 하나요?",
+            "얼마나 비싼 집을 살 수 있나요?",
+            "복리란 무엇이고 어떻게 작동하나요?",
+            "신용 점수를 어떻게 향상시키나요?",
+            "주식과 채권의 차이점은 무엇인가요?",
+            "은퇴를 위해 얼마나 저축해야 하나요?",
+            "달러 비용 평균법이란 무엇인가요?",
+            "재정 고문을 구해야 하나요?",
+            "처음부터 예산을 어떻게 세우나요?",
+            "로스 IRA와 전통적인 IRA의 차이점은 무엇인가요?",
+            "급여를 어떻게 협상하나요?",
+            "정말 필요한 보험은 무엇인가요?"
+        ],
+        'tip1_title': '💡 더 나은 답변을 얻는 방법:',
+        'tip1_specific': '✅ **구체적으로 말하세요**\n"30세에 은퇴를 위해 얼마나 저축해야 하나요?" vs "은퇴에 대해 알려주세요"',
+        'tip1_context': '✅ **맥락을 포함하세요**\n"저는 25세이고 연봉 $50k를 받으며 투자를 시작하고 싶습니다 - 어디서 시작해야 하나요?"',
+        'tip1_followup': '✅ **후속 질문을 하세요**\n더 깊은 통찰을 위해 이전 답변을 바탕으로 질문하세요',
+        'tip2_title': '📚 도움을 드릴 수 있는 주제:',
+        'tip2_topics': '''- 💰 예산 및 저축 전략
+- 📈 투자 기초 및 전략
+- 💳 부채 관리 및 상환 계획
+- 🏠 주택 구매 및 모기지
+- 🛡️ 보험 및 보호 계획
+- 📊 세금 계획 및 최적화
+- 💼 은퇴 계획'''
     }
 }
 
@@ -179,42 +233,16 @@ def render_language_selector():
     current_lang = st.session_state.selected_language
     languages = {
         'en': {'flag': '🇺🇸', 'name': 'English', 'type': 'emoji'},
-        'es': {'flag': '🇪🇸', 'name': 'Español', 'type': 'emoji'}, 
-        'ca': {'flag': 'catalan-flag', 'name': 'Català', 'type': 'custom'}  # Custom Catalan flag
+        'ca': {'flag': 'catalan-flag', 'name': 'Català', 'type': 'custom'},  # Custom Catalan flag
+        'ko': {'flag': '🇰🇷', 'name': '한국어', 'type': 'emoji'},
+        'es': {'flag': '🇪🇸', 'name': 'Español', 'type': 'emoji'}
     }
     
-    # Create a simple visual language indicator in top right (non-interactive for now)
-    catalan_flag_data = load_custom_flag('catalan-flag') 
+
     
+    # Language selection buttons
     with st.container():
-        # Right-aligned flag indicator  
-        col_spacer, col_indicator = st.columns([5, 1])
-        
-        with col_indicator:
-            # Simple visual language indicator
-            st.markdown(f"""
-            <div style="
-                text-align: right;
-                padding: 8px;
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                margin-bottom: 16px;
-            ">
-                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-                    <span style="font-size: 16px; opacity: {'1' if current_lang == 'en' else '0.3'};">🇺🇸</span>
-                    <span style="font-size: 16px; opacity: {'1' if current_lang == 'ca' else '0.3'};">
-                        {'<img src="' + catalan_flag_data + '" style="width: 16px; height: 12px; border-radius: 2px;">' if catalan_flag_data else '🏴'}
-                    </span>
-                    <span style="font-size: 16px; opacity: {'1' if current_lang == 'es' else '0.3'};">🇪🇸</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    # Language selection buttons (in sidebar or hidden area)
-    with st.container():
-        st.markdown("##### 🌍 Language / Idioma / Idioma")
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)
         
         with col1:
             # English flag display
@@ -249,6 +277,18 @@ def render_language_selector():
                 st.rerun()
         
         with col3:
+            # Korean flag display
+            st.markdown("""
+            <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 24px;">🇰🇷</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button("한국어", key="lang_ko_btn", use_container_width=True):
+                st.session_state.selected_language = 'ko'
+                st.rerun()
+        
+        with col4:
             # Spanish flag display
             st.markdown("""
             <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
@@ -265,143 +305,314 @@ def get_text(key):
     lang = st.session_state.get('selected_language', 'en')
     return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, key)
 
-# Page configuration
+# Page configuration optimized for all devices
 st.set_page_config(
     page_title="Personal Finance Q&A Assistant",
     page_icon="💰",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="centered",  # Better for mobile
+    initial_sidebar_state="collapsed",
+    menu_items={
+        'Get Help': 'https://github.com/solerroca/Broke-No-More',
+        'Report a bug': 'https://github.com/solerroca/Broke-No-More/issues',
+        'About': '''
+        # Personal Finance Q&A Assistant
+        
+        A multilingual AI-powered tool providing expert financial guidance in English, Spanish, Catalan, and Korean.
+        
+        Built with ❤️ using Streamlit and Google Gemini AI.
+        '''
+    }
 )
 
 
 
-# Custom CSS for better styling
+# Mobile-optimized meta tags and responsive CSS
 st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#3b82f6">
+
 <style>
+    /* 🎨 BASE STYLES - MOBILE FIRST APPROACH */
+    * {
+        box-sizing: border-box;
+    }
+    
     .main-header {
         text-align: center;
-        padding: 1rem 0;
+        padding: 1.5rem 1rem;
         background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
         color: white;
-        border-radius: 10px;
-        margin-bottom: 2rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
-    .info-box {
-        background-color: #f0f9ff;
-        border-left: 4px solid #3b82f6;
+    .main-header h1 {
+        font-size: 1.5rem !important;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    
+    .main-header p {
+        font-size: 0.85rem !important;
+        opacity: 0.95;
+        margin-bottom: 0;
+        line-height: 1.4;
+    }
+    
+    /* 📦 CONTENT BOXES */
+    .info-box, .warning-box, .success-box {
         padding: 1rem;
-        border-radius: 5px;
+        border-radius: 8px;
         margin: 1rem 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
     }
     
-    .warning-box {
-        background-color: #fef3c7;
-        border-left: 4px solid #f59e0b;
-        padding: 1rem;
-        border-radius: 5px;
-        margin: 1rem 0;
-    }
+    .info-box { background-color: #f0f9ff; border-left: 4px solid #3b82f6; }
+    .warning-box { background-color: #fef3c7; border-left: 4px solid #f59e0b; }
+    .success-box { background-color: #f0fdf4; border-left: 4px solid #10b981; }
     
-    .success-box {
-        background-color: #f0fdf4;
-        border-left: 4px solid #10b981;
-        padding: 1rem;
-        border-radius: 5px;
-        margin: 1rem 0;
-    }
-    
+    /* 🎯 BUTTONS - TOUCH FRIENDLY */
     .stButton > button {
-        width: 100%;
-        background-color: #3b82f6;
-        color: white;
-        border-radius: 5px;
-        border: none;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-        transition: background-color 0.3s;
+        width: 100% !important;
+        background-color: #3b82f6 !important;
+        color: white !important;
+        border-radius: 8px !important;
+        border: none !important;
+        padding: 0.75rem 1rem !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        min-height: 48px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+        margin-bottom: 0.5rem !important;
     }
     
     .stButton > button:hover {
-        background-color: #1d4ed8;
+        background-color: #1d4ed8 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
     }
     
-    /* Hide sidebar */
-    .css-1d391kg {
-        display: none;
+    .stButton > button:active {
+        transform: translateY(0);
     }
     
-    /* Center main content */
+    /* 📝 INPUT FIELDS */
+    .stTextArea > div > div > textarea {
+        border-radius: 8px !important;
+        border: 2px solid #e5e7eb !important;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        line-height: 1.5 !important;
+        min-height: 120px !important;
+    }
+    
+    .stTextArea > div > div > textarea:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    /* 🌍 LANGUAGE SELECTOR */
+    div[data-testid="column"] {
+        padding: 0 0.25rem;
+    }
+    
+    /* 🎭 EXAMPLE QUESTIONS */
+    .element-container button {
+        font-size: 0.85rem !important;
+        padding: 0.6rem 0.8rem !important;
+        text-align: left !important;
+        white-space: normal !important;
+        line-height: 1.3 !important;
+        min-height: 44px !important;
+    }
+    
+    /* 🖥️ LAYOUT */
     .main .block-container {
-        padding-top: 2rem;
-        max-width: 800px;
+        padding: 1rem !important;
+        max-width: 100% !important;
         margin: 0 auto;
     }
     
-
-
-    /* 📱 MOBILE-FRIENDLY STYLES */
-    @media (max-width: 768px) {
-
-        
-        /* Adjust main header for mobile */
+    /* Hide sidebar */
+    .css-1d391kg { display: none; }
+    
+    /* 📱 MOBILE PHONES (up to 480px) */
+    @media (max-width: 480px) {
         .main-header {
-            padding: 1.5rem 1rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
         }
         
         .main-header h1 {
-            font-size: 1.8rem !important;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem !important;
+        }
+        
+        .main-header p {
+            font-size: 0.8rem !important;
+        }
+        
+        .main .block-container {
+            padding: 0.75rem !important;
+        }
+        
+        /* Stack language buttons vertically on very small screens */
+        div[data-testid="column"] {
+            padding: 0.1rem;
+        }
+        
+        .stButton > button {
+            font-size: 0.8rem !important;
+            padding: 0.6rem 0.8rem !important;
+        }
+        
+        /* Make text areas more mobile friendly */
+        .stTextArea > div > div > textarea {
+            font-size: 0.9rem !important;
+            min-height: 100px !important;
+        }
+        
+        /* Smaller example question buttons */
+        .element-container button {
+            font-size: 0.8rem !important;
+            padding: 0.5rem 0.6rem !important;
+        }
+        
+        /* Responsive flag images */
+        div[style*="height: 32px"] {
+            height: 28px !important;
+        }
+        
+        div[style*="width: 24px"] img {
+            width: 20px !important;
+            height: 15px !important;
+        }
+    }
+    
+    /* 📱 LARGE MOBILE / SMALL TABLET (481px - 768px) */
+    @media (min-width: 481px) and (max-width: 768px) {
+        .main .block-container {
+            padding: 1.25rem !important;
+            max-width: 100% !important;
+        }
+        
+        .main-header {
+            padding: 1.25rem 1rem;
+        }
+        
+        .main-header h1 {
+            font-size: 1.6rem !important;
         }
         
         .main-header p {
             font-size: 0.9rem !important;
         }
         
-        /* Better spacing for mobile */
-        .main .block-container {
-            padding-top: 1rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        
-        /* Make buttons bigger and more touch-friendly */
         .stButton > button {
-            font-size: 0.9rem;
-            padding: 0.8rem 1rem;
-            margin-bottom: 0.5rem;
-            min-height: 48px; /* Good for touch screens */
-        }
-        
-        /* Improve text readability on mobile */
-        .stMarkdown {
-            font-size: 1rem;
-        }
-        
-        /* Better spacing for info boxes */
-        .info-box, .warning-box, .success-box {
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        
-        /* Make promotional book image smaller on mobile */
-        .mobile-book-promo img {
-            max-width: 200px !important;
-            height: auto;
-        }
-        
-        /* Make book promotional section mobile-friendly */
-        .main-header + div img {
-            max-width: 200px !important;
+            font-size: 0.9rem !important;
+            padding: 0.75rem 1rem !important;
         }
     }
     
-    /* 📱 TABLET STYLES (medium screens) */
+    /* 📲 TABLETS (769px - 1024px) */
     @media (min-width: 769px) and (max-width: 1024px) {
         .main .block-container {
-            padding-left: 2rem;
-            padding-right: 2rem;
+            padding: 1.5rem 2rem !important;
+            max-width: 900px !important;
+        }
+        
+        .main-header {
+            padding: 1.75rem 1.5rem;
+        }
+        
+        .main-header h1 {
+            font-size: 2rem !important;
+        }
+        
+        .main-header p {
+            font-size: 1rem !important;
+        }
+        
+        .stButton > button {
+            font-size: 1rem !important;
+            padding: 0.8rem 1.2rem !important;
+        }
+        
+        /* 3-column layout for language selector on tablets */
+        div[data-testid="column"] {
+            padding: 0 0.5rem;
+        }
+    }
+    
+    /* 🖥️ DESKTOP (1025px and up) */
+    @media (min-width: 1025px) {
+        .main .block-container {
+            padding: 2rem !important;
+            max-width: 1000px !important;
+        }
+        
+        .main-header {
+            padding: 2rem 1.5rem;
+        }
+        
+        .main-header h1 {
+            font-size: 2.2rem !important;
+        }
+        
+        .main-header p {
+            font-size: 1.1rem !important;
+        }
+        
+        .stButton > button {
+            font-size: 1rem !important;
+            padding: 0.9rem 1.5rem !important;
+        }
+        
+        /* Hover effects for desktop */
+        .stButton > button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3) !important;
+        }
+        
+        div[data-testid="column"] {
+            padding: 0 0.75rem;
+        }
+    }
+    
+    /* 🌟 LARGE DESKTOP (1440px and up) */
+    @media (min-width: 1440px) {
+        .main .block-container {
+            max-width: 1200px !important;
+        }
+    }
+    
+    /* 🔧 ACCESSIBILITY IMPROVEMENTS */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+    
+    /* 🌙 HIGH CONTRAST MODE */
+    @media (prefers-contrast: high) {
+        .stButton > button {
+            border: 2px solid #000 !important;
+        }
+    }
+    
+    /* 📊 PRINT STYLES */
+    @media print {
+        .stButton, .main-header {
+            display: none !important;
         }
     }
 </style>
@@ -871,15 +1082,11 @@ def main():
     # Disclaimer section - always visible for legal compliance
     st.markdown("---")
     
-    st.markdown("""
+    st.markdown(f"""
     <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 16px; margin: 20px 0;">
-        <h5 style="color: #495057; margin-top: 0; margin-bottom: 12px; font-weight: 500;">Disclaimer</h5>
+        <h5 style="color: #495057; margin-top: 0; margin-bottom: 12px; font-weight: 500;">{get_text('disclaimer')}</h5>
         <div style="font-size: 0.85em; color: #6c757d; line-height: 1.4;">
-        The information provided by this Personal Finance Q&A Assistant is for educational and informational purposes only and should not be considered as personalized financial, investment, tax, or legal advice. This AI-powered tool provides general guidance based on common financial principles and may not be suitable for your specific financial situation.
-        <br><br>
-        Always consult with qualified financial advisors, tax professionals, or other licensed experts before making important financial decisions. Past performance does not guarantee future results. All investments carry risk, including potential loss of principal.
-        <br><br>
-        By using this service, you acknowledge that you are solely responsible for your financial decisions and that neither the app nor its creators are liable for any financial losses or damages resulting from your use of this information.
+        {get_text('disclaimer_text')}
         </div>
     </div>
     """, unsafe_allow_html=True)

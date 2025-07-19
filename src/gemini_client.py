@@ -71,7 +71,8 @@ class GeminiClient:
         language_instructions = {
             'en': "Respond in English.",
             'es': "IMPORTANTE: Responde COMPLETAMENTE en español. Usa un tono educativo y profesional. Explica conceptos financieros de manera clara y accesible en español.",
-            'ca': "IMPORTANT: Respon COMPLETAMENT en català. Utilitza un to educatiu i professional. Explica conceptes financers de manera clara i accessible en català."
+            'ca': "IMPORTANT: Respon COMPLETAMENT en català. Utilitza un to educatiu i professional. Explica conceptes financers de manera clara i accessible en català.",
+            'ko': "중요: 반드시 한국어로 완전히 응답하세요. 교육적이고 전문적인 톤을 사용하세요. 재정 개념을 명확하고 접근 가능한 방식으로 한국어로 설명하세요."
         }
         
         language_instruction = language_instructions.get(language, "Respond in English.")
