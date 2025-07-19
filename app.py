@@ -17,7 +17,7 @@ from config.settings import get_settings
 # Language translations
 TRANSLATIONS = {
     'en': {
-        'title': 'Personal Finance Q&A Assistant',
+        'title': 'Personal Finance Assistant',
         'subtitle': 'Get expert financial advice powered by AI and curated knowledge',
         'question_header': '💬 Ask Your Personal Finance Question',
         'question_placeholder': 'e.g., How should I start investing as a beginner? What\'s the best way to create a budget?',
@@ -36,7 +36,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Topics I can help with:',
         'disclaimer': 'Disclaimer',
         'built_on': 'Built on Money Principles from',
-        'disclaimer_text': 'The information provided by this Personal Finance Q&A Assistant is for educational and informational purposes only and should not be considered as personalized financial, investment, tax, or legal advice. This AI-powered tool provides general guidance based on common financial principles and may not be suitable for your specific financial situation.<br><br>Always consult with qualified financial advisors, tax professionals, or other licensed experts before making important financial decisions. Past performance does not guarantee future results. All investments carry risk, including potential loss of principal.<br><br>By using this service, you acknowledge that you are solely responsible for your financial decisions and that neither the app nor its creators are liable for any financial losses or damages resulting from your use of this information.',
+        'disclaimer_text': 'The information provided by this Personal Finance Assistant is for educational and informational purposes only and should not be considered as personalized financial, investment, tax, or legal advice. This AI-powered tool provides general guidance based on common financial principles and may not be suitable for your specific financial situation.<br><br>Always consult with qualified financial advisors, tax professionals, or other licensed experts before making important financial decisions. Past performance does not guarantee future results. All investments carry risk, including potential loss of principal.<br><br>By using this service, you acknowledge that you are solely responsible for your financial decisions and that neither the app nor its creators are liable for any financial losses or damages resulting from your use of this information.',
         'questions': [
             "What's the 50/30/20 budgeting rule?",
             "How do I start an emergency fund?",
@@ -68,7 +68,7 @@ TRANSLATIONS = {
 - 💼 Retirement planning'''
     },
     'es': {
-        'title': 'Asistente de Finanzas Personales Q&A',
+        'title': 'Asistente de Finanzas Personales',
         'subtitle': 'Obtén consejos financieros expertos impulsados por IA y conocimiento curado',
         'question_header': '💬 Haz Tu Pregunta de Finanzas Personales',
         'question_placeholder': 'ej., ¿Cómo debo empezar a invertir como principiante? ¿Cuál es la mejor manera de crear un presupuesto?',
@@ -87,7 +87,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Temas en los que puedo ayudar:',
         'disclaimer': 'Aviso Legal',
         'built_on': 'Basado en Principios Monetarios de',
-        'disclaimer_text': 'La información proporcionada por este Asistente de Finanzas Personales Q&A es solo para fines educativos e informativos y no debe considerarse como asesoramiento financiero, de inversión, fiscal o legal personalizado. Esta herramienta impulsada por IA proporciona orientación general basada en principios financieros comunes y puede no ser adecuada para su situación financiera específica.<br><br>Siempre consulte con asesores financieros calificados, profesionales de impuestos u otros expertos licenciados antes de tomar decisiones financieras importantes. El rendimiento pasado no garantiza resultados futuros. Todas las inversiones conllevan riesgo, incluida la pérdida potencial del capital.<br><br>Al usar este servicio, usted reconoce que es el único responsable de sus decisiones financieras y que ni la aplicación ni sus creadores son responsables de cualquier pérdida financiera o daño resultante del uso de esta información.',
+        'disclaimer_text': 'La información proporcionada por este Asistente de Finanzas Personales es solo para fines educativos e informativos y no debe considerarse como asesoramiento financiero, de inversión, fiscal o legal personalizado. Esta herramienta impulsada por IA proporciona orientación general basada en principios financieros comunes y puede no ser adecuada para su situación financiera específica.<br><br>Siempre consulte con asesores financieros calificados, profesionales de impuestos u otros expertos con licencia antes de tomar decisiones financieras importantes. El rendimiento pasado no garantiza resultados futuros. Todas las inversiones conllevan riesgo, incluida la pérdida potencial del capital.<br><br>Al utilizar este servicio, reconoce que es el único responsable de sus decisiones financieras y que ni la aplicación ni sus creadores son responsables de ninguna pérdida financiera o daño resultante del uso de esta información.',
         'questions': [
             "¿Qué es la regla presupuestaria del 50/30/20?",
             "¿Cómo puedo empezar un fondo de emergencia?",
@@ -119,7 +119,7 @@ TRANSLATIONS = {
 - 💼 Planificación de jubilación'''
     },
     'ca': {
-        'title': 'Assistent de Finances Personals Q&A',
+        'title': 'Assistent de Finances Personals',
         'subtitle': 'Obté consells financers experts impulsats per IA i coneixement curat',
         'question_header': '💬 Fes la Teva Pregunta de Finances Personals',
         'question_placeholder': 'ex., Com hauria de començar a invertir com a principiant? Quina és la millor manera de crear un pressupost?',
@@ -138,7 +138,7 @@ TRANSLATIONS = {
         'topics_help': '📚 Temes en què puc ajudar:',
         'disclaimer': 'Avís Legal',
         'built_on': 'Basat en Principis Monetaris de',
-        'disclaimer_text': 'La informació proporcionada per aquest Assistent de Finances Personals Q&A és només per a fins educatius i informatius i no s\'ha de considerar com a assessorament financer, d\'inversió, fiscal o legal personalitzat. Aquesta eina impulsada per IA proporciona orientació general basada en principis financers comuns i pot no ser adequada per a la vostra situació financera específica.<br><br>Sempre consulteu amb assessors financers qualificats, professionals d\'impostos o altres experts llicenciats abans de prendre decisions financeres importants. El rendiment pasado no garanteix resultats futurs. Totes les inversions comporten risc, incloent-hi la pèrdua potencial del capital.<br><br>En utilitzar aquest servei, reconeixeu que sou l\'únic responsable de les vostres decisions financeres i que ni l\'aplicació ni els seus creadors són responsables de qualsevol pèrdua financera o dany resultant de l\'ús d\'aquesta informació.',
+        'disclaimer_text': 'La informació proporcionada per aquest Assistent de Finances Personals és només per a fins educatius i informatius i no s\'ha de considerar com a assessorament financer, d\'inversió, fiscal o legal personalitzat. Aquesta eina impulsada per IA proporciona orientació general basada en principis financers comuns i pot no ser adequada per a la vostra situació financera específica.<br><br>Sempre consulteu amb assessors financers qualificats, professionals d\'impostos o altres experts llicenciats abans de prendre decisions financeres importants. El rendiment pasado no garanteix resultats futurs. Totes les inversions comporten risc, incloent-hi la pèrdua potencial del capital.<br><br>En utilitzar aquest servei, reconeixeu que sou l\'únic responsable de les vostres decisions financeres i que ni l\'aplicació ni els seus creadors són responsables de qualsevol pèrdua financera o dany resultant de l\'ús d\'aquesta informació.',
         'questions': [
             "Què és la regla pressupostària del 50/30/20?",
             "Com puc començar un fons d'emergència?",
@@ -170,7 +170,7 @@ TRANSLATIONS = {
 - 💼 Planificació de jubilació'''
     },
     'ko': {
-        'title': '개인 재정 Q&A 어시스턴트',
+        'title': '개인 재정 어시스턴트',
         'subtitle': 'AI와 큐레이션된 지식으로 전문적인 재정 조언을 받으세요',
         'question_header': '💬 개인 재정 질문하기',
         'question_placeholder': '예: 초보자로서 투자를 어떻게 시작해야 하나요? 예산을 세우는 가장 좋은 방법은 무엇인가요?',
@@ -189,7 +189,7 @@ TRANSLATIONS = {
         'topics_help': '📚 도움을 드릴 수 있는 주제:',
         'disclaimer': '면책조항',
         'built_on': '재정 원칙 기반',
-        'disclaimer_text': '이 개인 재정 Q&A 어시스턴트에서 제공하는 정보는 교육 및 정보 제공 목적으로만 제공되며 개인화된 재정, 투자, 세금 또는 법률 조언으로 간주되어서는 안 됩니다. 이 AI 기반 도구는 일반적인 재정 원칙에 기반한 일반적인 지침을 제공하며 귀하의 특정 재정 상황에 적합하지 않을 수 있습니다.<br><br>중요한 재정 결정을 내리기 전에 항상 자격을 갖춘 재정 고문, 세무 전문가 또는 기타 면허를 가진 전문가와 상담하십시오. 과거 성과가 미래 결과를 보장하지 않습니다. 모든 투자는 원금 손실 가능성을 포함하여 위험을 수반합니다.<br><br>이 서비스를 사용함으로써 귀하는 자신의 재정 결정에 대해 전적으로 책임을 지며, 앱이나 그 제작자들이 이 정보의 사용으로 인한 재정적 손실이나 손해에 대해 책임지지 않음을 인정합니다.',
+        'disclaimer_text': '이 개인 재정 어시스턴트에서 제공하는 정보는 교육 및 정보 제공 목적으로만 제공되며 개인화된 재정, 투자, 세금 또는 법률 조언으로 간주되어서는 안 됩니다. 이 AI 기반 도구는 일반적인 재정 원칙에 기반한 일반적인 지침을 제공하며 귀하의 특정 재정 상황에 적합하지 않을 수 있습니다.<br><br>중요한 재정 결정을 내리기 전에 항상 자격을 갖춘 재정 고문, 세무 전문가 또는 기타 면허를 가진 전문가와 상담하십시오. 과거 성과가 미래 결과를 보장하지 않습니다. 모든 투자는 원금 손실 가능성을 포함하여 위험을 수반합니다.<br><br>이 서비스를 사용함으로써 귀하는 자신의 재정 결정에 대해 전적으로 책임을 지며, 앱이나 그 제작자들이 이 정보의 사용으로 인한 재정적 손실이나 손해에 대해 책임지지 않음을 인정합니다.',
         'questions': [
             "50/30/20 예산 규칙이 무엇인가요?",
             "비상자금을 어떻게 시작해야 하나요?",
@@ -268,7 +268,7 @@ def get_text(key):
 
 # Page configuration optimized for all devices
 st.set_page_config(
-    page_title="Personal Finance Q&A Assistant",
+    page_title="Personal Finance Assistant",
     page_icon="💰",
     layout="centered",  # Better for mobile
     initial_sidebar_state="collapsed",
@@ -276,7 +276,7 @@ st.set_page_config(
         'Get Help': 'https://github.com/solerroca/Broke-No-More',
         'Report a bug': 'https://github.com/solerroca/Broke-No-More/issues',
         'About': '''
-        # Personal Finance Q&A Assistant
+        # Personal Finance Assistant
         
         A multilingual AI-powered tool providing expert financial guidance in English, Spanish, Catalan, and Korean.
         
@@ -368,8 +368,8 @@ st.markdown("""
     .warning-box { background-color: #fef3c7; border-left: 4px solid #f59e0b; }
     .success-box { background-color: #f0fdf4; border-left: 4px solid #10b981; }
     
-    /* 🎯 BUTTONS - TOUCH FRIENDLY */
-    .stButton > button {
+    /* 🎯 BUTTONS - TOUCH FRIENDLY (for all other buttons except language selector) */
+    .stButton > button:not([key^="lang_"]) {
         width: 100% !important;
         background-color: #3b82f6 !important;
         color: white !important;
@@ -384,14 +384,24 @@ st.markdown("""
         margin-bottom: 0.5rem !important;
     }
     
-    .stButton > button:hover {
+    .stButton > button:not([key^="lang_"]):hover {
         background-color: #1d4ed8 !important;
         transform: translateY(-1px);
         box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
     }
     
-    .stButton > button:active {
+    .stButton > button:not([key^="lang_"]):active {
         transform: translateY(0);
+    }
+    
+    /* 🎭 EXAMPLE QUESTIONS */
+    .element-container button {
+        font-size: 0.85rem !important;
+        padding: 0.6rem 0.8rem !important;
+        text-align: left !important;
+        white-space: normal !important;
+        line-height: 1.3 !important;
+        min-height: 44px !important;
     }
     
     /* 📝 INPUT FIELDS */
@@ -410,8 +420,8 @@ st.markdown("""
     }
     
     /* 🌍 LANGUAGE SELECTOR - PROFESSIONAL FLAGS */
-    /* Style the language buttons directly without container */
-    .stButton > button {
+    /* Style ONLY the language selector buttons specifically */
+    .stButton > button[key^="lang_"] {
         width: 60px !important;
         height: 60px !important;
         border: 2px solid #e1e5e9 !important;
@@ -429,34 +439,21 @@ st.markdown("""
         padding: 0 !important;
     }
     
-    .stButton > button:hover {
+    .stButton > button[key^="lang_"]:hover {
         background-color: #f8fafc !important;
         border-color: #0066cc !important;
         transform: translateY(-2px) scale(1.05) !important;
         box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15) !important;
     }
     
-    .stButton > button:active,
-    .stButton > button:focus {
+    .stButton > button[key^="lang_"]:active,
+    .stButton > button[key^="lang_"]:focus {
         border-color: #0066cc !important;
         box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2) !important;
         transform: translateY(0) scale(1) !important;
     }
     
-    /* Add spacing below language selector */
-    .stButton {
-        margin-bottom: 1.5rem !important;
-    }
-    
-    /* 🎭 EXAMPLE QUESTIONS */
-    .element-container button {
-        font-size: 0.85rem !important;
-        padding: 0.6rem 0.8rem !important;
-        text-align: left !important;
-        white-space: normal !important;
-        line-height: 1.3 !important;
-        min-height: 44px !important;
-    }
+    /* 🎯 BUTTONS - TOUCH FRIENDLY (for all other buttons except language selector) */
     
     /* 🖥️ LAYOUT */
     .main .block-container {
@@ -489,7 +486,7 @@ st.markdown("""
         }
         
         /* Language selector mobile optimizations */
-        .stButton > button {
+        .stButton > button[key^="lang_"] {
             width: 56px !important;
             height: 56px !important;
             border-radius: 14px !important;
@@ -674,6 +671,11 @@ st.markdown("""
     
     .stVerticalBlock > div:empty {
         display: none !important;
+    }
+
+    /* Add spacing after language selector */
+    .main .block-container > div:first-child {
+        margin-bottom: 1.5rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
