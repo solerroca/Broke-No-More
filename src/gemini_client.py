@@ -20,8 +20,8 @@ class GeminiClient:
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(settings.GEMINI_MODEL)
     
-    def generate_response(self, question: str = None, context_documents: List[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Generate a response based on the question and relevant context documents."""
+    def generate_response(self, question: str = None, context_documents: List[Dict[str, Any]] = None, language: str = 'en') -> Dict[str, Any]:
+        """Generate a response based on the question and relevant context documents in the specified language."""
         try:
             # Handle different parameter formats
             if context_documents is None:
@@ -33,8 +33,8 @@ class GeminiClient:
             else:
                 context_texts = [str(doc) for doc in context_documents]
             
-            # Create the prompt with context
-            prompt = self._create_prompt(question, context_texts)
+            # Create the prompt with context and language
+            prompt = self._create_prompt(question, context_texts, language)
             
             # Generate response
             response = self.model.generate_content(
@@ -60,14 +60,25 @@ class GeminiClient:
                 'sources': []
             }
     
-    def _create_prompt(self, question: str, context_documents: List[str]) -> str:
-        """Create a structured prompt for the Gemini model."""
+    def _create_prompt(self, question: str, context_documents: List[str], language: str = 'en') -> str:
+        """Create a structured prompt for the Gemini model with language support."""
         if context_documents:
             context = "\n\n".join([f"Reference Material {i+1}:\n{doc}" for i, doc in enumerate(context_documents)])
         else:
             context = "No specific reference material provided."
         
+        # Language-specific instructions
+        language_instructions = {
+            'en': "Respond in English.",
+            'es': "IMPORTANTE: Responde COMPLETAMENTE en español. Usa un tono educativo y profesional. Explica conceptos financieros de manera clara y accesible en español.",
+            'ca': "IMPORTANT: Respon COMPLETAMENT en català. Utilitza un to educatiu i professional. Explica conceptes financers de manera clara i accessible en català."
+        }
+        
+        language_instruction = language_instructions.get(language, "Respond in English.")
+        
         prompt = f"""You are a highly knowledgeable Certified Financial Planner (CFP) and personal finance expert with over 20 years of experience helping people achieve their financial goals. You have deep expertise in budgeting, investing, debt management, retirement planning, insurance, and tax strategies.
+
+CRITICAL LANGUAGE REQUIREMENT: {language_instruction}
 
 IMPORTANT - Your Response Style:
 • Respond as a confident financial expert and educator

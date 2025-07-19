@@ -14,6 +14,257 @@ from src.knowledge_base_simple import SimpleKnowledgeBase
 from src.utils import validate_finance_question, process_document
 from config.settings import get_settings
 
+# Language translations
+TRANSLATIONS = {
+    'en': {
+        'title': 'Personal Finance Q&A Assistant',
+        'subtitle': 'Get expert financial advice powered by AI and curated knowledge',
+        'question_header': '💬 Ask Your Personal Finance Question',
+        'question_placeholder': 'e.g., How should I start investing as a beginner? What\'s the best way to create a budget?',
+        'question_help': 'Ask specific questions about budgeting, investing, saving, debt management, or other financial topics.',
+        'get_answer_btn': '🔍 Get Expert Answer',
+        'enter_question': '📝 Please enter a question first.',
+        'not_finance': '⚠️ Not a finance question',
+        'not_finance_text': 'This app is designed for personal finance questions. Please ask about topics like: budgeting, saving, investing, debt management, retirement planning, insurance, or taxes.',
+        'expert_answer': '💡 Expert Answer',
+        'thinking': '🤔 Thinking and analyzing your question...',
+        'example_questions': '🎯 Example Questions',
+        'example_subtitle': 'Click any question below to auto-fill the input field:',
+        'refresh_btn': '🔄 Refresh',
+        'quick_tips': '📋 Quick Tips',
+        'better_answers': '💡 How to get better answers:',
+        'topics_help': '📚 Topics I can help with:',
+        'disclaimer': 'Disclaimer',
+        'built_on': 'Built on Money Principles from',
+        'questions': [
+            "What's the 50/30/20 budgeting rule?",
+            "How do I start an emergency fund?",
+            "What's the difference between 401k and IRA?",
+            "Should I pay off debt or invest first?",
+            "How much house can I afford?",
+            "What is compound interest and how does it work?",
+            "How do I improve my credit score?",
+            "What's the difference between stocks and bonds?",
+            "How much should I save for retirement?",
+            "What is dollar-cost averaging?",
+            "Should I get a financial advisor?",
+            "How do I create a budget from scratch?",
+            "What's the difference between Roth and traditional IRA?",
+            "How do I negotiate my salary?",
+            "What insurance do I really need?"
+        ],
+        'tip1_title': '💡 How to get better answers:',
+        'tip1_specific': '✅ **Be specific**\n"How much should I save for retirement at age 30?" vs "Tell me about retirement"',
+        'tip1_context': '✅ **Include context**\n"I\'m 25, make $50k, want to start investing - where do I begin?"',
+        'tip1_followup': '✅ **Ask follow-ups**\nBuild on previous answers for deeper insights',
+        'tip2_title': '📚 Topics I can help with:',
+        'tip2_topics': '''- 💰 Budgeting & saving strategies
+- 📈 Investment basics & strategies  
+- 💳 Debt management & payoff plans
+- 🏠 Home buying & mortgages
+- 🛡️ Insurance & protection planning
+- 📊 Tax planning & optimization
+- 💼 Retirement planning'''
+    },
+    'es': {
+        'title': 'Asistente de Finanzas Personales Q&A',
+        'subtitle': 'Obtén consejos financieros expertos impulsados por IA y conocimiento curado',
+        'question_header': '💬 Haz Tu Pregunta de Finanzas Personales',
+        'question_placeholder': 'ej., ¿Cómo debo empezar a invertir como principiante? ¿Cuál es la mejor manera de crear un presupuesto?',
+        'question_help': 'Haz preguntas específicas sobre presupuesto, inversión, ahorro, gestión de deudas u otros temas financieros.',
+        'get_answer_btn': '🔍 Obtener Respuesta Experta',
+        'enter_question': '📝 Por favor, ingresa una pregunta primero.',
+        'not_finance': '⚠️ No es una pregunta financiera',
+        'not_finance_text': 'Esta aplicación está diseñada para preguntas de finanzas personales. Por favor pregunta sobre temas como: presupuesto, ahorro, inversión, gestión de deudas, planificación de jubilación, seguros o impuestos.',
+        'expert_answer': '💡 Respuesta Experta',
+        'thinking': '🤔 Pensando y analizando tu pregunta...',
+        'example_questions': '🎯 Preguntas de Ejemplo',
+        'example_subtitle': 'Haz clic en cualquier pregunta para completar automáticamente el campo:',
+        'refresh_btn': '🔄 Actualizar',
+        'quick_tips': '📋 Consejos Rápidos',
+        'better_answers': '💡 Cómo obtener mejores respuestas:',
+        'topics_help': '📚 Temas en los que puedo ayudar:',
+        'disclaimer': 'Aviso Legal',
+        'built_on': 'Basado en Principios Monetarios de',
+        'questions': [
+            "¿Qué es la regla presupuestaria 50/30/20?",
+            "¿Cómo empiezo un fondo de emergencia?",
+            "¿Cuál es la diferencia entre 401k e IRA?",
+            "¿Debo pagar deudas o invertir primero?",
+            "¿Cuánta casa puedo permitirme?",
+            "¿Qué es el interés compuesto y cómo funciona?",
+            "¿Cómo mejoro mi puntaje crediticio?",
+            "¿Cuál es la diferencia entre acciones y bonos?",
+            "¿Cuánto debo ahorrar para la jubilación?",
+            "¿Qué es el promedio de costo por dólar?",
+            "¿Debo conseguir un asesor financiero?",
+            "¿Cómo creo un presupuesto desde cero?",
+            "¿Cuál es la diferencia entre Roth e IRA tradicional?",
+            "¿Cómo negocio mi salario?",
+            "¿Qué seguros realmente necesito?"
+        ],
+        'tip1_title': '💡 Cómo obtener mejores respuestas:',
+        'tip1_specific': '✅ **Sé específico**\n"¿Cuánto debo ahorrar para la jubilación a los 30 años?" vs "Háblame de jubilación"',
+        'tip1_context': '✅ **Incluye contexto**\n"Tengo 25 años, gano $50k, quiero empezar a invertir - ¿por dónde empiezo?"',
+        'tip1_followup': '✅ **Haz preguntas de seguimiento**\nBásate en respuestas anteriores para obtener información más profunda',
+        'tip2_title': '📚 Temas en los que puedo ayudar:',
+        'tip2_topics': '''- 💰 Estrategias de presupuesto y ahorro
+- 📈 Conceptos básicos y estrategias de inversión
+- 💳 Gestión de deudas y planes de pago
+- 🏠 Compra de vivienda e hipotecas
+- 🛡️ Seguros y planificación de protección
+- 📊 Planificación fiscal y optimización
+- 💼 Planificación de jubilación'''
+    },
+    'ca': {
+        'title': 'Assistent de Finances Personals Q&A',
+        'subtitle': 'Obté consells financers experts impulsats per IA i coneixement curat',
+        'question_header': '💬 Fes la Teva Pregunta de Finances Personals',
+        'question_placeholder': 'ex., Com hauria de començar a invertir com a principiant? Quina és la millor manera de crear un pressupost?',
+        'question_help': 'Fes preguntes específiques sobre pressupost, inversió, estalvi, gestió de deutes o altres temes financers.',
+        'get_answer_btn': '🔍 Obtenir Resposta Experta',
+        'enter_question': '📝 Si us plau, introdueix una pregunta primer.',
+        'not_finance': '⚠️ No és una pregunta financera',
+        'not_finance_text': 'Aquesta aplicació està dissenyada per a preguntes de finances personals. Si us plau pregunta sobre temes com: pressupost, estalvi, inversió, gestió de deutes, planificació de jubilació, assegurances o impostos.',
+        'expert_answer': '💡 Resposta Experta',
+        'thinking': '🤔 Pensant i analitzant la teva pregunta...',
+        'example_questions': '🎯 Preguntes d\'Exemple',
+        'example_subtitle': 'Fes clic a qualsevol pregunta per omplir automàticament el camp:',
+        'refresh_btn': '🔄 Actualitzar',
+        'quick_tips': '📋 Consells Ràpids',
+        'better_answers': '💡 Com obtenir millors respostes:',
+        'topics_help': '📚 Temes en què puc ajudar:',
+        'disclaimer': 'Avís Legal',
+        'built_on': 'Basat en Principis Monetaris de',
+        'questions': [
+            "Què és la regla pressupostària 50/30/20?",
+            "Com començo un fons d'emergència?",
+            "Quina és la diferència entre 401k i IRA?",
+            "He de pagar deutes o invertir primer?",
+            "Quanta casa em puc permetre?",
+            "Què és l'interès compost i com funciona?",
+            "Com milloro la meva puntuació creditícia?",
+            "Quina és la diferència entre accions i bons?",
+            "Quan he d'estalviar per a la jubilació?",
+            "Què és la mitjana de cost per dòlar?",
+            "He de contractar un assessor financer?",
+            "Com creo un pressupost des de zero?",
+            "Quina és la diferència entre Roth i IRA tradicional?",
+            "Com negocio el meu salari?",
+            "Quines assegurances necessito realment?"
+        ],
+        'tip1_title': '💡 Com obtenir millors respostes:',
+        'tip1_specific': '✅ **Sigues específic**\n"Quan he d\'estalviar per a la jubilació als 30 anys?" vs "Parla\'m de jubilació"',
+        'tip1_context': '✅ **Inclou context**\n"Tinc 25 anys, guanyo $50k, vull començar a invertir - per on començo?"',
+        'tip1_followup': '✅ **Fes preguntes de seguiment**\nBasa\'t en respostes anteriors per obtenir informació més profunda',
+        'tip2_title': '📚 Temes en què puc ajudar:',
+        'tip2_topics': '''- 💰 Estratègies de pressupost i estalvi
+- 📈 Conceptes bàsics i estratègies d\'inversió
+- 💳 Gestió de deutes i plans de pagament
+- 🏠 Compra d\'habitatge i hipoteques
+- 🛡️ Assegurances i planificació de protecció
+- 📊 Planificació fiscal i optimització
+- 💼 Planificació de jubilació'''
+    }
+}
+
+def render_language_selector():
+    """Render the language selector with flags in the top right corner."""
+    
+    # Initialize language in session state
+    if 'selected_language' not in st.session_state:
+        st.session_state.selected_language = 'en'
+    
+    # Display current language selector in top right
+    current_lang = st.session_state.selected_language
+    languages = {
+        'en': {'flag': '🇺🇸', 'name': 'English', 'type': 'emoji'},
+        'es': {'flag': '🇪🇸', 'name': 'Español', 'type': 'emoji'}, 
+        'ca': {'flag': 'catalan-flag', 'name': 'Català', 'type': 'custom'}  # Custom Catalan flag
+    }
+    
+    # Create a simple visual language indicator in top right (non-interactive for now)
+    catalan_flag_data = load_custom_flag('catalan-flag') 
+    
+    with st.container():
+        # Right-aligned flag indicator  
+        col_spacer, col_indicator = st.columns([5, 1])
+        
+        with col_indicator:
+            # Simple visual language indicator
+            st.markdown(f"""
+            <div style="
+                text-align: right;
+                padding: 8px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin-bottom: 16px;
+            ">
+                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                    <span style="font-size: 16px; opacity: {'1' if current_lang == 'en' else '0.3'};">🇺🇸</span>
+                    <span style="font-size: 16px; opacity: {'1' if current_lang == 'ca' else '0.3'};">
+                        {'<img src="' + catalan_flag_data + '" style="width: 16px; height: 12px; border-radius: 2px;">' if catalan_flag_data else '🏴'}
+                    </span>
+                    <span style="font-size: 16px; opacity: {'1' if current_lang == 'es' else '0.3'};">🇪🇸</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # Language selection buttons (in sidebar or hidden area)
+    with st.container():
+        st.markdown("##### 🌍 Language / Idioma / Idioma")
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            # English flag display
+            st.markdown("""
+            <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 24px;">🇺🇸</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button("English", key="lang_en_btn", use_container_width=True):
+                st.session_state.selected_language = 'en'
+                st.rerun()
+        
+        with col2:
+            # Catalan flag display
+            catalan_flag_data = load_custom_flag('catalan-flag')
+            if catalan_flag_data:
+                st.markdown(f"""
+                <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                    <img src="{catalan_flag_data}" alt="Catalan flag" style="width: 24px; height: 18px; border-radius: 2px;">
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 24px;">🏴</span>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            if st.button("Català", key="lang_ca_btn", use_container_width=True):
+                st.session_state.selected_language = 'ca'
+                st.rerun()
+        
+        with col3:
+            # Spanish flag display
+            st.markdown("""
+            <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 24px;">🇪🇸</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button("Español", key="lang_es_btn", use_container_width=True):
+                st.session_state.selected_language = 'es'
+                st.rerun()
+
+def get_text(key):
+    """Get translated text based on selected language."""
+    lang = st.session_state.get('selected_language', 'en')
+    return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, key)
+
 # Page configuration
 st.set_page_config(
     page_title="Personal Finance Q&A Assistant",
@@ -87,8 +338,12 @@ st.markdown("""
         margin: 0 auto;
     }
     
+
+
     /* 📱 MOBILE-FRIENDLY STYLES */
     @media (max-width: 768px) {
+
+        
         /* Adjust main header for mobile */
         .main-header {
             padding: 1.5rem 1rem;
@@ -254,14 +509,36 @@ def load_book_image():
         print(f"⚠️ Error loading image: {e}")
         return None
 
+def load_custom_flag(flag_name):
+    """Load and encode a custom flag image."""
+    try:
+        # Try PNG first (better browser support), then SVG
+        for ext in ['.png', '.svg']:
+            flag_path = Path(f"static/images/flags/{flag_name}{ext}")
+            if flag_path.exists():
+                with open(flag_path, "rb") as flag_file:
+                    flag_data = base64.b64encode(flag_file.read()).decode()
+                    file_type = "svg+xml" if ext == '.svg' else "png"
+                    return f"data:image/{file_type};base64,{flag_data}"
+        return None
+    except Exception as e:
+        print(f"⚠️ Error loading flag {flag_name}: {e}")
+        return None
+
 def main():
     """Main application function."""
     
-    # Header
-    st.markdown("""
+    # Language selector
+    render_language_selector()
+    
+    # Header with translations
+    title = get_text('title')
+    subtitle = get_text('subtitle')
+    
+    st.markdown(f"""
     <div class="main-header">
-        <h1>💰 Personal Finance Q&A Assistant</h1>
-        <p>Get expert financial advice powered by AI and curated knowledge</p>
+        <h1>💰 {title}</h1>
+        <p>{subtitle}</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -273,7 +550,7 @@ def main():
         st.markdown(f"""
         <div style="text-align: center; margin: 30px 0;">
             <div style="margin-bottom: 10px;">
-                <p style="color: #2c3e50; font-size: 1.1em; font-weight: 700; margin: 0;">Built on Money Principles from</p>
+                <p style="color: #2c3e50; font-size: 1.1em; font-weight: 700; margin: 0;">{get_text('built_on')}</p>
             </div>
             <a href="https://www.amazon.com/Broke-More-Easy-Follow-Strategies/dp/196628800X/ref=sr_1_2?crid=1I2229DFKOWE2&dib=eyJ2IjoiMSJ9.Y3EC7BYPotcNcCpQkFuWgyTURtZXDgSMa7v87YOnt6xEb5zqzgwRhigftpmGRMm4li93dXytUd--woy-3Rgy2IyLVY6WKfoqkPhv2wCyF6Hfw0BtnlDDAko1UEaUoucVe6Xkm91djx57Bhqy8Dzs2eNZKDL91bhxdBCwFUA-rQUqzyTIp7oB0OG_dWcP4nj1xEcm0eVBjM4sSSdmHdwiq2BQAFp1p9_rLQWo2z-n0_M.ogRhG6GClaDbNPhSUSXTVFswk4_0KRCJLAb9iR8n0S4&dib_tag=se&keywords=broke+no+more&qid=1751304047&sprefix=broke+no+more%2Caps%2C171&sr=8-2" target="_blank" style="text-decoration: none; display: block;">
                 <div style="display: inline-block; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 25px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 15px rgba(0,0,0,0.08)'">
@@ -306,19 +583,20 @@ def main():
         st.stop()
     
     # Main content area - full width
-    st.markdown("## 💬 Ask Your Personal Finance Question")
+    st.markdown(f"## {get_text('question_header')}")
     
     # Initialize selected question in session state
     if 'selected_question' not in st.session_state:
         st.session_state.selected_question = ""
     
-    # Question input
+    # Question input with translations
     user_question = st.text_area(
-        "What would you like to know about personal finance?",
+        label="Your Finance Question",
         value=st.session_state.selected_question,
-        placeholder="e.g., How should I start investing as a beginner? What's the best way to create a budget?",
+        placeholder=get_text('question_placeholder'),
         height=120,
-        help="Ask specific questions about budgeting, investing, saving, debt management, or other financial topics."
+        help=get_text('question_help'),
+        label_visibility="collapsed"
     )
     
     # Submit button - fixed size and centered
@@ -350,40 +628,40 @@ def main():
     # Center the button using columns but handle response outside columns
     col1, col2, col3 = st.columns([2, 1, 2])
     with col2:
-        button_clicked = st.button("🔍 Get Expert Answer", type="primary", key="expert_answer_btn")
+        button_clicked = st.button(get_text('get_answer_btn'), type="primary", key="expert_answer_btn")
     
     # Handle button response outside of column context for full-width display
     if button_clicked:
         if not user_question.strip():
-            st.warning("📝 Please enter a question first.")
+            st.warning(get_text('enter_question'))
         else:
             # Clear the selected question from session state
             st.session_state.selected_question = ""
             
             # Validate if it's a finance-related question
             if not validate_finance_question(user_question):
-                st.markdown("""
+                st.markdown(f"""
                 <div class="warning-box">
-                    <strong>⚠️ Not a finance question</strong><br>
-                    This app is designed for personal finance questions. Please ask about topics like:
-                    budgeting, saving, investing, debt management, retirement planning, insurance, or taxes.
+                    <strong>{get_text('not_finance')}</strong><br>
+                    {get_text('not_finance_text')}
                 </div>
                 """, unsafe_allow_html=True)
             else:
                 # Process the question
-                with st.spinner("🤔 Thinking and analyzing your question..."):
+                with st.spinner(get_text('thinking')):
                     try:
                         # Search knowledge base
                         relevant_docs = st.session_state.knowledge_base.search(user_question, top_k=3)
                         
-                        # Generate response using Gemini
+                        # Generate response using Gemini with language preference
                         response = st.session_state.gemini_client.generate_response(
                             question=user_question,
-                            context_documents=relevant_docs
+                            context_documents=relevant_docs,
+                            language=st.session_state.selected_language
                         )
                         
                         # Display response - clean format without confidence or sources
-                        st.markdown("### 💡 Expert Answer")
+                        st.markdown(f"### {get_text('expert_answer')}")
                         
                         # Apply consistent CSS styling for the answer
                         st.markdown("""
@@ -515,49 +793,28 @@ def main():
     # Sample questions - moved above tips
     st.markdown("---")
     
-    st.markdown("### 🎯 Example Questions")
-    st.markdown("Click any question below to auto-fill the input field:")
+    st.markdown(f"### {get_text('example_questions')}")
+    st.markdown(get_text('example_subtitle'))
     
-    # Comprehensive list of finance questions covering various topics
-    all_questions = [
-        "What's the 50/30/20 budgeting rule?",
-        "How do I start an emergency fund?",
-        "What's the difference between 401k and IRA?",
-        "Should I pay off debt or invest first?",
-        "How much house can I afford?",
-        "What is compound interest and how does it work?",
-        "How do I improve my credit score?",
-        "What's the difference between stocks and bonds?",
-        "How much should I save for retirement?",
-        "What is dollar-cost averaging?",
-        "Should I get a financial advisor?",
-        "How do I create a budget from scratch?",
-        "What's the difference between Roth and traditional IRA?",
-        "How do I negotiate my salary?",
-        "What insurance do I really need?",
-        "How do I start investing with little money?",
-        "What's the avalanche vs snowball debt method?",
-        "How do I save money on groceries?",
-        "What are index funds and ETFs?",
-        "How do I plan for major expenses?",
-        "What's the difference between debit and credit cards?",
-        "How do I protect myself from identity theft?",
-        "What are the tax benefits of homeownership?",
-        "How do I choose a bank or credit union?",
-        "What's a good debt-to-income ratio?",
-        "How do I save for my child's education?",
-        "What are the basics of estate planning?",
-        "How do I manage money as a couple?",
-        "What's the difference between gross and net income?",
-        "How do I prepare for financial emergencies?"
-    ]
+    # Get questions in current language
+    all_questions = get_text('questions')
+    
+    # Check if language changed and update questions accordingly
+    current_lang = st.session_state.get('selected_language', 'en')
+    if 'questions_language' not in st.session_state:
+        st.session_state.questions_language = current_lang
+    
+    # If language changed, update the questions
+    if st.session_state.questions_language != current_lang:
+        st.session_state.questions_language = current_lang
+        st.session_state.current_sample_questions = random.sample(all_questions, 5)
     
     # Refresh button below the heading
-    if st.button("🔄 Refresh", help="Get new example questions", key="refresh_questions", type="secondary"):
+    if st.button(get_text('refresh_btn'), help="Get new example questions", key="refresh_questions", type="secondary"):
         st.session_state.current_sample_questions = random.sample(all_questions, 5)
         st.rerun()
     
-    # Randomly select 5 questions to display
+    # Randomly select 5 questions to display (initialize if needed)
     if 'current_sample_questions' not in st.session_state:
         st.session_state.current_sample_questions = random.sample(all_questions, 5)
     
@@ -590,34 +847,25 @@ def main():
     
     # Tips section
     st.markdown("---")
-    st.markdown("## 📋 Quick Tips")
+    st.markdown(f"## {get_text('quick_tips')}")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("""
-        **💡 How to get better answers:**
+        st.markdown(f"""
+        **{get_text('tip1_title')}**
         
-        ✅ **Be specific**  
-        "How much should I save for retirement at age 30?" vs "Tell me about retirement"
+        {get_text('tip1_specific')}
         
-        ✅ **Include context**  
-        "I'm 25, make $50k, want to start investing - where do I begin?"
+        {get_text('tip1_context')}
         
-        ✅ **Ask follow-ups**  
-        Build on previous answers for deeper insights
+        {get_text('tip1_followup')}
         """)
     
     with col2:
-        st.markdown("""
-        **📚 Topics I can help with:**
-        - 💰 Budgeting & saving strategies
-        - 📈 Investment basics & strategies  
-        - 💳 Debt management & payoff plans
-        - 🏠 Home buying & mortgages
-        - 🛡️ Insurance & protection planning
-        - 📊 Tax planning & optimization
-        - 💼 Retirement planning
+        st.markdown(f"""
+        **{get_text('tip2_title')}**
+        {get_text('tip2_topics')}
         """)
     
     # Disclaimer section - always visible for legal compliance
