@@ -140,20 +140,20 @@ TRANSLATIONS = {
         'built_on': 'Basat en Principis Monetaris de',
         'disclaimer_text': 'La informació proporcionada per aquest Assistent de Finances Personals Q&A és només per a fins educatius i informatius i no s\'ha de considerar com a assessorament financer, d\'inversió, fiscal o legal personalitzat. Aquesta eina impulsada per IA proporciona orientació general basada en principis financers comuns i pot no ser adequada per a la vostra situació financera específica.<br><br>Sempre consulteu amb assessors financers qualificats, professionals d\'impostos o altres experts llicenciats abans de prendre decisions financeres importants. El rendiment passat no garanteix resultats futurs. Totes les inversions comporten risc, incloent-hi la pèrdua potencial del capital.<br><br>En utilitzar aquest servei, reconeixeu que sou l\'únic responsable de les vostres decisions financeres i que ni l\'aplicació ni els seus creadors són responsables de qualsevol pèrdua financera o dany resultant de l\'ús d\'aquesta informació.',
         'questions': [
-            "Què és la regla pressupostària 50/30/20?",
-            "Com començo un fons d'emergència?",
-            "Quina és la diferència entre 401k i IRA?",
-            "He de pagar deutes o invertir primer?",
-            "Quanta casa em puc permetre?",
+            "Què és la regla pressupostària del 50/30/20?",
+            "Com puc començar un fons d'emergència?",
+            "Quina diferència hi ha entre un pla de pensions 401k i un IRA?",
+            "He de pagar els deutes primer o invertir?",
+            "Quant em puc permetre gastar en habitatge?",
             "Què és l'interès compost i com funciona?",
-            "Com milloro la meva puntuació creditícia?",
-            "Quina és la diferència entre accions i bons?",
-            "Quan he d'estalviar per a la jubilació?",
-            "Què és la mitjana de cost per dòlar?",
-            "He de contractar un assessor financer?",
-            "Com creo un pressupost des de zero?",
-            "Quina és la diferència entre Roth i IRA tradicional?",
-            "Com negocio el meu salari?",
+            "Com puc millorar la meva puntuació creditícia?",
+            "Quina diferència hi ha entre accions i bons?",
+            "Quant hauria d'estalviar per a la jubilació?",
+            "Què és l'estratègia d'inversió periòdica (DCA)?",
+            "Necessito un assessor financer?",
+            "Com puc crear un pressupost des de zero?",
+            "Quina diferència hi ha entre un pla de pensions Roth i un tradicional?",
+            "Com puc negociar el meu salari?",
             "Quines assegurances necessito realment?"
         ],
         'tip1_title': '💡 Com obtenir millors respostes:',
@@ -223,80 +223,71 @@ TRANSLATIONS = {
 }
 
 def render_language_selector():
-    """Render the language selector with flags in the top right corner."""
+    """Render the language selector with flags only - compact and mobile-friendly."""
     
     # Initialize language in session state
     if 'selected_language' not in st.session_state:
         st.session_state.selected_language = 'en'
     
-    # Display current language selector in top right
+    # Display current language selector - flags only for space efficiency
     current_lang = st.session_state.selected_language
-    languages = {
-        'en': {'flag': '🇺🇸', 'name': 'English', 'type': 'emoji'},
-        'ca': {'flag': 'catalan-flag', 'name': 'Català', 'type': 'custom'},  # Custom Catalan flag
-        'ko': {'flag': '🇰🇷', 'name': '한국어', 'type': 'emoji'},
-        'es': {'flag': '🇪🇸', 'name': 'Español', 'type': 'emoji'}
-    }
     
-
-    
-    # Language selection buttons
+    # Language selection with flags only
     with st.container():
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            # English flag display
-            st.markdown("""
-            <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 24px;">🇺🇸</span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if st.button("English", key="lang_en_btn", use_container_width=True):
+            # English flag button
+            if st.button("🇺🇸", key="lang_en_btn", use_container_width=True, 
+                        help="English"):
                 st.session_state.selected_language = 'en'
                 st.rerun()
         
         with col2:
-            # Catalan flag display
+            # Catalan flag button
             catalan_flag_data = load_custom_flag('catalan-flag')
             if catalan_flag_data:
+                # Use HTML button-like behavior for custom flag
+                flag_clicked = st.button("🏴", key="lang_ca_btn", use_container_width=True, 
+                                        help="Català")
+                if flag_clicked:
+                    st.session_state.selected_language = 'ca'
+                    st.rerun()
+                # Replace the button with custom flag image using JavaScript for click handling
                 st.markdown(f"""
-                <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                    <img src="{catalan_flag_data}" alt="Catalan flag" style="width: 24px; height: 18px; border-radius: 2px;">
-                </div>
+                <style>
+                div[data-testid="stButton"] button[kind="secondary"]:has([aria-label="Català"]) {{
+                    background-image: url("{catalan_flag_data}");
+                    background-size: 24px 18px;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    font-size: 0; /* Hide emoji text */
+                    min-height: 38px;
+                }}
+                div[data-testid="stButton"] button[kind="secondary"]:has([aria-label="Català"]):hover {{
+                    background-color: #f0f0f0;
+                    border: 2px solid #0066cc;
+                }}
+                </style>
                 """, unsafe_allow_html=True)
             else:
-                st.markdown("""
-                <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 24px;">🏴</span>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            if st.button("Català", key="lang_ca_btn", use_container_width=True):
-                st.session_state.selected_language = 'ca'
-                st.rerun()
+                # Fallback to emoji if custom flag fails to load
+                if st.button("🏴", key="lang_ca_btn_fallback", use_container_width=True, 
+                            help="Català"):
+                    st.session_state.selected_language = 'ca'
+                    st.rerun()
         
         with col3:
-            # Korean flag display
-            st.markdown("""
-            <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 24px;">🇰🇷</span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if st.button("한국어", key="lang_ko_btn", use_container_width=True):
+            # Korean flag button
+            if st.button("🇰🇷", key="lang_ko_btn", use_container_width=True,
+                        help="한국어"):
                 st.session_state.selected_language = 'ko'
                 st.rerun()
         
         with col4:
-            # Spanish flag display
-            st.markdown("""
-            <div style="text-align: center; margin-bottom: 4px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 24px;">🇪🇸</span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if st.button("Español", key="lang_es_btn", use_container_width=True):
+            # Spanish flag button
+            if st.button("🇪🇸", key="lang_es_btn", use_container_width=True,
+                        help="Español"):
                 st.session_state.selected_language = 'es'
                 st.rerun()
 
@@ -418,9 +409,33 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
     }
     
-    /* 🌍 LANGUAGE SELECTOR */
+    /* 🌍 LANGUAGE SELECTOR - FLAGS ONLY */
     div[data-testid="column"] {
         padding: 0 0.25rem;
+    }
+    
+    /* Language flag buttons styling - specific to language selector */
+    button[key^="lang_"] {
+        font-size: 1.5rem !important;
+        padding: 0.5rem !important;
+        min-height: 44px !important;
+        min-width: 44px !important;
+        border-radius: 8px !important;
+        border: 2px solid transparent !important;
+        background-color: #ffffff !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    button[key^="lang_"]:hover {
+        background-color: #f0f2f6 !important;
+        border-color: #0066cc !important;
+        transform: scale(1.05) !important;
+    }
+    
+    button[key^="lang_"]:active,
+    button[key^="lang_"]:focus {
+        border-color: #0066cc !important;
+        box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2) !important;
     }
     
     /* 🎭 EXAMPLE QUESTIONS */
@@ -463,12 +478,21 @@ st.markdown("""
             padding: 0.75rem !important;
         }
         
-        /* Stack language buttons vertically on very small screens */
+        /* Language flags - maintain size and improve spacing on mobile */
         div[data-testid="column"] {
             padding: 0.1rem;
         }
         
-        .stButton > button {
+        /* Language flag buttons - keep them visible on mobile */
+        button[key^="lang_"] {
+            font-size: 1.3rem !important;
+            padding: 0.4rem !important;
+            min-height: 48px !important;
+            min-width: 48px !important;
+        }
+        
+        /* Other buttons (non-language) styling for mobile */
+        .stButton > button:not([key^="lang_"]) {
             font-size: 0.8rem !important;
             padding: 0.6rem 0.8rem !important;
         }
